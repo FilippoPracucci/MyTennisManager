@@ -43,6 +43,7 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
                         "Data_Fine DATE NOT NULL," +
                         "Id_Circolo INT NOT NULL," +
                         "PRIMARY KEY(Id_Torneo, Numero_Edizione)" +
+                        "CONSTRAINTS torneoCircolo UNIQUE(Id_Torneo, Id_Circolo)" +
                     ")");
             return true;
         } catch (final SQLException e) {
@@ -165,7 +166,17 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
             } else {
                 return 0;
             }
-            
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<EdizioneTorneo> findByCircolo(final Integer idCircolo) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Circolo = ?";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, idCircolo);
+            final ResultSet resultSet = statement.executeQuery();
+            return readEdizioniTorneoFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }

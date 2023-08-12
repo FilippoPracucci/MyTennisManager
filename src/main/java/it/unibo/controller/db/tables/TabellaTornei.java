@@ -174,5 +174,4 @@ public class TabellaTornei implements Table<Torneo, Integer> {
             throw new IllegalStateException(e);
         }
     }
-
 }

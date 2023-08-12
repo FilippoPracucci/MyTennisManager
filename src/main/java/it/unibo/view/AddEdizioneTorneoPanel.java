@@ -71,7 +71,6 @@ public class AddEdizioneTorneoPanel extends JPanel {
         this.clubLabel = new JLabel(CLUB_LABEL);
 
         this.idTorneo = new JComboBox<>();
-        this.createTournamentsList(this.idTorneo, queryManager);
         this.nEdition = new JLabel();
         this.clubName = new JLabel();
         this.startYear = new JComboBox<>();
@@ -122,6 +121,8 @@ public class AddEdizioneTorneoPanel extends JPanel {
                 queryManager.findOrganizzatoreByCredentials(credentials.getX(), credentials.getY()).get().getId()
             ).get().getNome()
         );
+
+        this.createTournamentsList(this.idTorneo, queryManager, this.IdClub);
 
         this.numEdizione = queryManager.getNumeroEdizione(queryManager.findTorneo((Integer) this.idTorneo.getModel().getSelectedItem()).get());
         this.nEdition.setText(String.valueOf(this.numEdizione));
@@ -236,7 +237,7 @@ public class AddEdizioneTorneoPanel extends JPanel {
         }
     }
 
-    private final void createTournamentsList(final JComboBox<Integer> box, final QueryManager qM) {
-        qM.findAllTorneo().forEach(t -> box.addItem(t.getId()));
+    private final void createTournamentsList(final JComboBox<Integer> box, final QueryManager qM, final Integer idCircolo) {
+        qM.findAllTorneoByCircolo(qM.findCircolo(idCircolo).get()).forEach(t -> box.addItem(t.getId()));
     }
 }
