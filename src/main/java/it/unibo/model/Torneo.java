@@ -18,6 +18,7 @@ public class Torneo {
         }
 
         public static Tipo getTipo(final String nome) {
+            //System.out.println(List.of(Tipo.values()).stream().filter(t -> t.getNome().equalsIgnoreCase(nome)).findFirst().get());
             return List.of(Tipo.values()).stream().filter(t -> t.getNome().equalsIgnoreCase(nome)).findFirst().get();
         }
 

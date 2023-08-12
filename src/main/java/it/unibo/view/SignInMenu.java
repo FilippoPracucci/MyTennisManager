@@ -79,6 +79,7 @@ public class SignInMenu extends JPanel {
                 //frame.changePanel();
                 queryManager.findGiocatoreByCredentials(this.emailField.getText(), this.passwordField.getText());
             } else if (result == 1) {
+                //frame.setFocusableWindowState(false);
                 frame.changePanel(new MenuOrganizzatore(frame, dim, queryManager, new Pair<>(this.emailField.getText(), this.passwordField.getText())));
             } else {
                 frame.dispose();

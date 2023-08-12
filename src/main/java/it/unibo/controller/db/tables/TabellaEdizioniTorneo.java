@@ -27,6 +27,10 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
         this.connection = Objects.requireNonNull(connection);
     }
 
+    public Connection getConnection() {
+        return this.connection;
+    }
+
     @Override
     public String getTableName() {
         return TABLE_NAME;
@@ -43,7 +47,7 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
                         "Data_Fine DATE NOT NULL," +
                         "Id_Circolo INT NOT NULL," +
                         "PRIMARY KEY(Id_Torneo, Numero_Edizione)" +
-                        "CONSTRAINTS torneoCircolo UNIQUE(Id_Torneo, Id_Circolo)" +
+                        //"CONSTRAINTS torneoCircolo UNIQUE(Id_Torneo, Id_Circolo)" +
                     ")");
             return true;
         } catch (final SQLException e) {

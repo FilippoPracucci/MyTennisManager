@@ -1,5 +1,8 @@
 package it.unibo.controller.db;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -145,6 +148,10 @@ public class QueryManager {
         return this.torneo.findAllByCircolo(circolo.getId());
     }
 
+    public Integer getIdLastTorneo() {
+        return this.torneo.getLastId();
+    }
+
     public EdizioneTorneo createEdizioneTorneo(final Integer id_torneo,
             final Integer n_edizione,
             final Date d_inizio,
@@ -160,5 +167,21 @@ public class QueryManager {
 
     public int getNumeroEdizione(final Torneo torneo) {
         return this.edizioneTorneo.getEdizioneTorneo(torneo.getId()) + 1;
+    }
+
+    public List<EdizioneTorneo> findAllEdizioniByCircolo(final Circolo circolo) {
+        final String query =
+            "SELECT t.Id_Torneo, et.Numero_Edizione, t.Tipo, et.Data_Inizio, et.Data_Fine, t.Limite_Categoria, t.Limite_Eta, t.Montepremi" +
+            "FROM " + this.torneo.getTableName() + "AS t" +
+            "JOIN " + this.edizioneTorneo.getTableName() + "AS et" +
+            "WHERE t.Id_Torneo = et.Id_Torneo" +
+            "AND Id_Circolo = ?";
+        try (final PreparedStatement statement = this.edizioneTorneo.getConnection().prepareStatement(query)) {
+            statement.setInt(1, circolo.getId());
+            final ResultSet resultSet = statement.executeQuery();
+            //return readEdizioniTorneoFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

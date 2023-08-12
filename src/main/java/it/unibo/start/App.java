@@ -43,6 +43,11 @@ public class App {
         this.tabellaUnioni = new TabellaUnioni(connectionProvider.getMySQLConnection());
         this.queryManager = new QueryManager(connectionProvider);
         this.frame = new MainFrame(this.queryManager);
+        
+        this.tabellaTornei.dropTable();
+        this.tabellaTornei.createTable();
+        this.tabellaEdizioniTorneo.dropTable();
+        this.tabellaEdizioniTorneo.createTable();
     }
 
     public void setup() {

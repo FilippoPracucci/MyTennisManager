@@ -13,6 +13,7 @@ public class SecondaryFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.setResizable(false);
     }
 
     public void changePanel(final JPanel panel) {

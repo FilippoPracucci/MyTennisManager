@@ -102,7 +102,7 @@ public class TabellaTornei implements Table<Torneo, Integer> {
     }
 
     public List<Torneo> findAllByCircolo(final Integer idCircolo) {
-        final String query = "SELECT Id_Torneo FROM " + TABLE_NAME + " WHERE Id_Torneo = " +
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Torneo IN " +
                 "(SELECT EDIZIONE_TORNEI.Id_Torneo FROM EDIZIONE_TORNEI WHERE Id_Circolo = ?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, idCircolo);
@@ -170,6 +170,20 @@ public class TabellaTornei implements Table<Torneo, Integer> {
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public Integer getLastId() {
+        final String query = "SELECT MAX(Id_Torneo) AS Id_Torneo FROM " + TABLE_NAME + " ORDER BY Id_Torneo DESC";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            final ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("Id_Torneo");
+            } else {
+                return 0;
+            }
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }

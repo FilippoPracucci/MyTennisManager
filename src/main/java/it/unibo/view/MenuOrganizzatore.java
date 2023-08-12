@@ -3,6 +3,8 @@ package it.unibo.view;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import java.util.Optional;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
@@ -25,8 +27,8 @@ public class MenuOrganizzatore extends JPanel {
 
     public MenuOrganizzatore(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager, final Pair<String, String> credentials) {
         this.pane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-        this.newTournamentEdition = new AddEdizioneTorneoPanel(frame, dim, queryManager, credentials);
-        this.newTournament = new AddTorneoPanel(frame, dim, queryManager);
+        this.newTournamentEdition = new AddEdizioneTorneoPanel(frame, dim, queryManager, credentials, Optional.empty());
+        this.newTournament = new AddTorneoPanel(frame, dim, queryManager, credentials);
         this.allTournaments = new JPanel();
 
         this.setLayout(new FlowLayout(FlowLayout.CENTER));

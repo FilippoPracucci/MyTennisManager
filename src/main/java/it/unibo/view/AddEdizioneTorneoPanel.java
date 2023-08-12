@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -54,10 +55,15 @@ public class AddEdizioneTorneoPanel extends JPanel {
     private int eYear;
     private int sMonth;
     private int eMonth;
+    private int sDay;
     private int numEdizione;
     private final Integer IdClub;
 
-    public AddEdizioneTorneoPanel(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager, Pair<String, String> credentials) {
+    public AddEdizioneTorneoPanel(final SecondaryFrame frame,
+            final Dimension dim,
+            final QueryManager queryManager,
+            final Pair<String, String> credentials,
+            final Optional<Integer> idT) {
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final GridBagLayout layout = new GridBagLayout();
         final GridBagConstraints cnst = new GridBagConstraints();
@@ -97,12 +103,12 @@ public class AddEdizioneTorneoPanel extends JPanel {
         });
         this.endYear.addItemListener(e -> {
             eYear = ((Integer) this.endYear.getModel().getSelectedItem()).intValue();
-             System.out.println("eYear = " + eYear);
             this.endDay.removeAllItems();
             this.createDaysList(1, LocalDate.of(eYear, eMonth, 1).lengthOfMonth(), this.endDay);
         });
         this.startMonth.addItemListener(e -> {
             sMonth = ((Integer) this.startMonth.getModel().getSelectedItem()).intValue();
+            this.endMonth.setSelectedItem(sMonth);
             this.startDay.removeAllItems();
             this.createDaysList(1, LocalDate.of(sYear, sMonth, 1).lengthOfMonth(), this.startDay);
         });
@@ -110,6 +116,11 @@ public class AddEdizioneTorneoPanel extends JPanel {
             eMonth = ((Integer) this.endMonth.getModel().getSelectedItem()).intValue();
             this.endDay.removeAllItems();
             this.createDaysList(1, LocalDate.of(eYear, eMonth, 1).lengthOfMonth(), this.endDay);
+        });
+
+        this.startDay.addItemListener(e -> {
+            sDay = ((Integer) this.startDay.getModel().getSelectedItem()).intValue();
+            this.endDay.setSelectedItem(sDay);
         });
 
         this.IdClub = queryManager
@@ -122,10 +133,13 @@ public class AddEdizioneTorneoPanel extends JPanel {
             ).get().getNome()
         );
 
-        this.createTournamentsList(this.idTorneo, queryManager, this.IdClub);
-
-        this.numEdizione = queryManager.getNumeroEdizione(queryManager.findTorneo((Integer) this.idTorneo.getModel().getSelectedItem()).get());
-        this.nEdition.setText(String.valueOf(this.numEdizione));
+        if (idT.isPresent()) {
+            this.idTorneo.addItem(idT.get());
+            this.numEdizione = 1;
+            this.nEdition.setText(String.valueOf(this.numEdizione));
+        } else {
+            this.createTournamentsList(this.idTorneo, queryManager, this.IdClub);
+        }
 
         this.idTorneo.addItemListener(e -> {
             this.numEdizione = queryManager.getNumeroEdizione(queryManager.findTorneo((Integer) this.idTorneo.getModel().getSelectedItem()).get());

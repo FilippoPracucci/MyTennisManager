@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 
 import it.unibo.controller.db.QueryManager;
 import it.unibo.model.Torneo.Tipo;
+import it.unibo.utils.Pair;
 
 public class AddTorneoPanel extends JPanel {
 
@@ -29,7 +30,7 @@ public class AddTorneoPanel extends JPanel {
     private static final String RANK_LIMIT_LABEL = "Limite di categoria *";
     private static final String AGE_LIMIT_LABEL = "Limite età *";
     private static final String PRIZE_LABEL = "Montepremi *";
-    private static final String INFO = "Campo con * = opzionale";
+    private static final String INFO = "* opzionale";
     private static final String SIGNUP = "Aggiungi";
     private static final String CANCEL = "Annulla";
 
@@ -37,7 +38,7 @@ public class AddTorneoPanel extends JPanel {
     private final JLabel rankLimitLabel;
     private final JLabel ageLimitLabel;
     private final JLabel prizeLabel;
-    private final JComboBox<Tipo> type;
+    private final JComboBox<String> type;
     private final JComboBox<Integer> rankLimit;
     private final JTextField ageLimitField;
     private final JTextField prizeField;
@@ -45,7 +46,7 @@ public class AddTorneoPanel extends JPanel {
     private final JButton signUp;
     private final JButton cancel;
 
-    public AddTorneoPanel(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager) {
+    public AddTorneoPanel(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager, Pair<String, String> credentials) {
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final GridBagLayout layout = new GridBagLayout();
         final GridBagConstraints cnst = new GridBagConstraints();
@@ -83,6 +84,7 @@ public class AddTorneoPanel extends JPanel {
         cnst.gridx = 0;
         this.add(this.info, cnst);
         cnst.gridy += 2;
+        cnst.gridx += 2;
         southPanel.add(this.signUp, cnst);
         southPanel.add(this.cancel, cnst);
         this.add(southPanel, cnst);
@@ -113,6 +115,7 @@ public class AddTorneoPanel extends JPanel {
                     prize)
             );
             JOptionPane.showMessageDialog(this, "Torneo inserito con successo!");
+            frame.changePanel(new AddEdizioneTorneoPanel(frame, dim, queryManager, credentials, Optional.of(queryManager.getIdLastTorneo())));
         });
 
         this.cancel.addActionListener(e -> {
@@ -159,7 +162,7 @@ public class AddTorneoPanel extends JPanel {
         }
     }
 
-    private void createTypeList(final JComboBox<Tipo> box) {
-        List.of(Tipo.values()).forEach(t -> box.addItem(t));
+    private void createTypeList(final JComboBox<String> box) {
+        List.of(Tipo.values()).forEach(t -> box.addItem(t.getNome()));
     }
 }
