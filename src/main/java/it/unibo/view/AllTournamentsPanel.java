@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import it.unibo.controller.db.QueryManager;
 import it.unibo.utils.Pair;
@@ -15,6 +16,8 @@ public class AllTournamentsPanel extends JPanel {
     private static final double HEIGHT_PERC = 0.5;
 
     private final List<String> columns;
+
+    private final JTable table;
 
     public AllTournamentsPanel(final SecondaryFrame frame,
             final Dimension dim,
@@ -33,11 +36,16 @@ public class AllTournamentsPanel extends JPanel {
                 "Limite_Categoria",
                 "Limite_Eta",
                 "Montepremi");
-        queryManager.findAllTorneoByCircolo(queryManager.findCircoloByOrganizzatore(
-            queryManager.findOrganizzatoreByCredentials(credentials.getX(), credentials.getY())
-            .get()
-            .getId()
-        ).get());
+        
+        this.table = new JTable(
+            queryManager.listTorneiToMatrix(
+                queryManager.findAllEdizioniByCircolo(
+                    queryManager.findCircolo(
+                        queryManager.findOrganizzatoreByCredentials(credentials.getX(), credentials.getY()).get().getId()
+                    ).get()
+                ),
+            8),
+            this.columns.toArray());
 
         
     }

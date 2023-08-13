@@ -3,6 +3,7 @@ package it.unibo.controller.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,10 @@ import it.unibo.model.EdizioneTorneo;
 import it.unibo.model.Giocatore;
 import it.unibo.model.Organizzatore;
 import it.unibo.model.Torneo;
+import it.unibo.model.ViewTornei;
 import it.unibo.model.Torneo.Tipo;
+import it.unibo.utils.Pair;
+import it.unibo.utils.Utils;
 
 public class QueryManager {
 
@@ -152,6 +156,10 @@ public class QueryManager {
         return this.torneo.getLastId();
     }
 
+    public void deleteTorneo(final Integer id) {
+        this.torneo.delete(id);
+    }
+
     public EdizioneTorneo createEdizioneTorneo(final Integer id_torneo,
             final Integer n_edizione,
             final Date d_inizio,
@@ -165,11 +173,23 @@ public class QueryManager {
         this.edizioneTorneo.save(eTorneo);
     }
 
+    public EdizioneTorneo findEdizioneByPrimaryKey(final Pair<Integer, Integer> key) {
+        return this.edizioneTorneo.findByPrimaryKey(key).get();
+    }
+
     public int getNumeroEdizione(final Torneo torneo) {
         return this.edizioneTorneo.getEdizioneTorneo(torneo.getId()) + 1;
     }
 
-    public List<EdizioneTorneo> findAllEdizioniByCircolo(final Circolo circolo) {
+    public void deleteEdizioneTorneo(final Pair<Integer, Integer> key) {
+        this.edizioneTorneo.delete(key);
+    }
+
+    public List<EdizioneTorneo> findAllEdizioneByTorneo(final Torneo torneo) {
+        return this.edizioneTorneo.findAllByTorneo(torneo.getId());
+    }
+
+    public List<ViewTornei> findAllEdizioniByCircolo(final Circolo circolo) {
         final String query =
             "SELECT t.Id_Torneo, et.Numero_Edizione, t.Tipo, et.Data_Inizio, et.Data_Fine, t.Limite_Categoria, t.Limite_Eta, t.Montepremi" +
             "FROM " + this.torneo.getTableName() + "AS t" +
@@ -179,9 +199,45 @@ public class QueryManager {
         try (final PreparedStatement statement = this.edizioneTorneo.getConnection().prepareStatement(query)) {
             statement.setInt(1, circolo.getId());
             final ResultSet resultSet = statement.executeQuery();
-            //return readEdizioniTorneoFromResultSet(resultSet);
+            return readViewTorneiFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private List<ViewTornei> readViewTorneiFromResultSet(final ResultSet resultSet) {
+        final List<ViewTornei> tornei = new ArrayList<>();
+        try {
+            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
+            // before the first row. With next the pointer advances to the following row and returns 
+            // true if it has not advanced past the last row
+            while (resultSet.next()) {
+                // To get the values of the columns of the row currently pointed we use the get methods 
+                final Integer idTorneo = resultSet.getInt("Id_Torneo");
+                final Integer nEdizione = resultSet.getInt("Numero_Edizione");
+                final Tipo tipo = Tipo.getTipo(resultSet.getString("Tipo"));
+                final Date dInizio = Utils.sqlDateToDate(resultSet.getDate("Data_Inizio"));
+                final Date dFine = Utils.sqlDateToDate(resultSet.getDate("Data_Fine"));
+                final Optional<Integer> limite_categoria = Optional.ofNullable(resultSet.getInt("Limite_Categoria"));
+                final Optional<Integer> limite_eta = Optional.ofNullable(resultSet.getInt("Limite_Eta"));
+                final Optional<Integer> montepremi = Optional.ofNullable(resultSet.getInt("Montepremi"));
+                // After retrieving all the data we create a Student object
+                final ViewTornei torneo = new ViewTornei(idTorneo, nEdizione, tipo, dInizio, dFine, limite_categoria, limite_eta, montepremi);
+                tornei.add(torneo);
+            }
+        } catch (final SQLException e) {}
+        return tornei;
+    }
+
+    public ViewTornei[][] listTorneiToMatrix(final List<ViewTornei> list, final int col) {
+        ViewTornei[][] matrix = new ViewTornei[list.size()][col];
+
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < col; j++) {
+                matrix[i][j] = list.get(i * j + j);
+            }
+        }
+
+        return matrix;
     }
 }

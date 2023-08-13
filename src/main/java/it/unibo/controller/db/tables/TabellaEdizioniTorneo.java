@@ -185,4 +185,15 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
             throw new IllegalStateException(e);
         }
     }
+
+    public List<EdizioneTorneo> findAllByTorneo(final Integer idTorneo) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Torneo = ?";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, idTorneo);
+            final ResultSet resultSet = statement.executeQuery();
+            return readEdizioniTorneoFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }
