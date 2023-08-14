@@ -5,12 +5,14 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -41,9 +43,10 @@ public class DeleteEditionPanel extends JPanel {
     private final JButton delete;
     private final JButton cancel;
 
-    private int id;
-    private int nE;
+    private Optional<Integer> id;
+    private Optional<Integer> nE;
     private Pair<Integer, Integer> key;
+    private DateFormat dFormat;
 
     public DeleteEditionPanel(final SecondaryFrame frame,
             final Dimension dim,
@@ -67,35 +70,50 @@ public class DeleteEditionPanel extends JPanel {
                 queryManager.findOrganizzatoreByCredentials(credentials.getX(), credentials.getY()).get().getId()
             ).get()
         ).stream().map(c -> c.getId()).toList(), idTournamentBox);
-        this.id = this.idTournamentBox.getModel().getElementAt(0);
+
+        if (this.idTournamentBox.getItemCount() == 0) {
+            this.id = Optional.empty();
+        } else {
+            this.id = Optional.of((Integer) this.idTournamentBox.getModel().getSelectedItem());
+        }
 
         this.nEditionBox = new JComboBox<>();
-        this.createList(queryManager.findAllEdizioneByTorneo(
-            queryManager.findTorneo(this.id).get()
-        ).stream().map(et -> et.getNumeroEdizione()).toList(), nEditionBox);
-        this.nE = this.nEditionBox.getModel().getElementAt(0);
+        if (this.id.isPresent()) {
+            this.createList(queryManager.findAllEdizioneByTorneo(
+                queryManager.findTorneo(this.id.get()).get()
+            ).stream().map(et -> et.getNumeroEdizione()).toList(), nEditionBox);
+            this.nE = Optional.of((Integer) this.nEditionBox.getModel().getSelectedItem());
 
-        this.key = new Pair<>(this.id, this.nE);
-        
-        this.startDate = new JLabel(queryManager.findEdizioneByPrimaryKey(this.key).getDataInizio().toString());
-        this.endDate = new JLabel(queryManager.findEdizioneByPrimaryKey(this.key).getDataFine().toString());
+            this.key = new Pair<>(this.id.get(), this.nE.get());
+        }
+
+        this.startDate = new JLabel();
+        this.endDate = new JLabel();
+        this.dFormat = new SimpleDateFormat("dd-MM-YYYY");
+        if (this.id.isPresent() && this.nE.isPresent()) {
+            this.startDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataInizio()));
+            this.endDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataFine()));
+        }
 
         this.idTournamentBox.addItemListener(e -> {
-            this.id = ((Integer) this.idTournamentBox.getModel().getSelectedItem()).intValue();
+            this.id = Optional.of((Integer) this.idTournamentBox.getModel().getSelectedItem());
+            this.nEditionBox.removeAllItems();
             this.createList(queryManager.findAllEdizioneByTorneo(
-                queryManager.findTorneo(this.id).get()
+                queryManager.findTorneo(this.id.get()).get()
             ).stream().map(et -> et.getNumeroEdizione()).toList(), nEditionBox);
-            this.nE = this.nEditionBox.getModel().getElementAt(0);
-            this.key = new Pair<>(this.id, this.nE);
-            this.startDate.setText(queryManager.findEdizioneByPrimaryKey(this.key).getDataInizio().toString());
-            this.endDate.setText(queryManager.findEdizioneByPrimaryKey(this.key).getDataFine().toString());
+            this.nE = Optional.of((Integer) this.nEditionBox.getModel().getSelectedItem());
+            this.key = new Pair<>(this.id.get(), this.nE.get());
+            this.startDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataInizio()));
+            this.endDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataFine()));
         });
 
         this.nEditionBox.addItemListener(e -> {
-            this.nE = ((Integer) this.nEditionBox.getModel().getSelectedItem()).intValue();
-            this.key = new Pair<>(this.id, this.nE);
-            this.startDate.setText(queryManager.findEdizioneByPrimaryKey(this.key).getDataInizio().toString());
-            this.endDate.setText(queryManager.findEdizioneByPrimaryKey(this.key).getDataFine().toString());
+            this.nE = Optional.ofNullable((Integer) this.nEditionBox.getModel().getSelectedItem());
+            if (this.nE.isPresent()) {
+                this.key = new Pair<>(this.id.get(), this.nE.get());
+                this.startDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataInizio()));
+                this.endDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataFine()));
+            }
         });
 
         this.delete = new JButton(DELETE);
@@ -104,7 +122,7 @@ public class DeleteEditionPanel extends JPanel {
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
-        startFrame(frame);
+        //startFrame(frame);
         cnst.gridy = 0;
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;
@@ -124,33 +142,32 @@ public class DeleteEditionPanel extends JPanel {
         });
 
         this.cancel.addActionListener(e -> {
-            final String[] options = { "Yes", "No" };
+            final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Do you really want to quit?",
-                    "Quitting",
+                    "Sei sicuro di voler uscire?",
+                    "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
                     options[1]);
             if (result == 0) {
-                closeFrame(frame);
+                frame.closeFrame();
             }
         });
     }
 
-    private void startFrame(final SecondaryFrame frame) {
+    /*private void startFrame(final SecondaryFrame frame) {
         frame.add(this);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setResizable(false);
     }
 
     private void closeFrame(final SecondaryFrame frame) {
         frame.dispose();
-    }
+    }*/
 
     private void addField(final JLabel label, final JComponent field, final GridBagConstraints cnst) {
         cnst.gridx = 0;

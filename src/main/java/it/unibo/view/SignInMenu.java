@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -52,7 +51,7 @@ public class SignInMenu extends JPanel {
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
-        startFrame(frame);
+        frame.startFrame(this);
         cnst.gridy = 0;
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;
@@ -82,27 +81,27 @@ public class SignInMenu extends JPanel {
                 //frame.setFocusableWindowState(false);
                 frame.changePanel(new MenuOrganizzatore(frame, dim, queryManager, new Pair<>(this.emailField.getText(), this.passwordField.getText())));
             } else {
-                frame.dispose();
+                frame.closeFrame();
             }
         });
 
         this.cancel.addActionListener(e -> {
-            final String[] options = { "Yes", "No" };
+            final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Do you really want to quit?",
-                    "Quitting",
+                    "Sei sicuro di voler uscire?",
+                    "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
                     options[1]);
             if (result == 0) {
-                closeFrame(frame);
+                frame.closeFrame();
             }
         });
     }
 
-    private void startFrame(final JFrame frame) {
+    /*private void startFrame(final JFrame frame) {
         frame.add(this);
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -113,7 +112,7 @@ public class SignInMenu extends JPanel {
 
     private void closeFrame(final JFrame frame) {
         frame.dispose();
-    }
+    }*/
 
     private void addField(final JLabel label, final JTextField field, final GridBagConstraints cnst) {
         cnst.gridx = 0;

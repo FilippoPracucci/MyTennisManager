@@ -30,7 +30,15 @@ public class MainFrame extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    /*public static void main(String[] args) {
-        new MainFrame();
-    }*/
+    public void startFrame(final JPanel panel) {
+        this.add(panel);
+        this.pack();
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+        this.setResizable(false);
+    }
+
+    public void closeFrame() {
+        this.dispose();
+    }
 }

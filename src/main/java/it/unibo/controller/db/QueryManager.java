@@ -3,6 +3,8 @@ package it.unibo.controller.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -178,7 +180,7 @@ public class QueryManager {
     }
 
     public int getNumeroEdizione(final Torneo torneo) {
-        return this.edizioneTorneo.getEdizioneTorneo(torneo.getId()) + 1;
+        return this.edizioneTorneo.getEdizioneTorneo(torneo.getId());
     }
 
     public void deleteEdizioneTorneo(final Pair<Integer, Integer> key) {
@@ -191,11 +193,11 @@ public class QueryManager {
 
     public List<ViewTornei> findAllEdizioniByCircolo(final Circolo circolo) {
         final String query =
-            "SELECT t.Id_Torneo, et.Numero_Edizione, t.Tipo, et.Data_Inizio, et.Data_Fine, t.Limite_Categoria, t.Limite_Eta, t.Montepremi" +
-            "FROM " + this.torneo.getTableName() + "AS t" +
-            "JOIN " + this.edizioneTorneo.getTableName() + "AS et" +
-            "WHERE t.Id_Torneo = et.Id_Torneo" +
-            "AND Id_Circolo = ?";
+            "SELECT t.Id_Torneo, et.Numero_Edizione, t.Tipo, et.Data_Inizio, et.Data_Fine, t.Limite_Categoria, t.Limite_Eta, t.Montepremi " +
+            "FROM " + this.torneo.getTableName() + " t " +
+            "JOIN " + this.edizioneTorneo.getTableName() + " et " +
+            "ON (t.Id_Torneo = et.Id_Torneo) " +
+            "WHERE Id_Circolo = ?";
         try (final PreparedStatement statement = this.edizioneTorneo.getConnection().prepareStatement(query)) {
             statement.setInt(1, circolo.getId());
             final ResultSet resultSet = statement.executeQuery();
@@ -229,13 +231,23 @@ public class QueryManager {
         return tornei;
     }
 
-    public ViewTornei[][] listTorneiToMatrix(final List<ViewTornei> list, final int col) {
-        ViewTornei[][] matrix = new ViewTornei[list.size()][col];
+    public Object[][] listTorneiToMatrix(final List<ViewTornei> list, final int col) {
+        Object[][] matrix = new Object[list.size()][col];
+        DateFormat df = new SimpleDateFormat("dd-MM-YYYY");
+        ViewTornei vt;
+        int j = 0;
 
         for (int i = 0; i < list.size(); i++) {
-            for (int j = 0; j < col; j++) {
-                matrix[i][j] = list.get(i * j + j);
-            }
+            vt = list.get(i);
+            matrix[i][j++] = vt.getIdTorneo();
+            matrix[i][j++] = vt.getNumEdizione();
+            matrix[i][j++] = vt.getTipo();
+            matrix[i][j++] = df.format(vt.getDataInizio());
+            matrix[i][j++] = df.format(vt.getDataFine());
+            matrix[i][j++] = vt.getLimCategoria().orElse(null);
+            matrix[i][j++] = vt.getLimEta().orElse(null);
+            matrix[i][j++] = vt.getMontepremi().orElse(null);
+            j = 0;
         }
 
         return matrix;

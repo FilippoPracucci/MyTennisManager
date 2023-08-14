@@ -12,7 +12,7 @@ public class SecondaryFrame extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
     }
 
@@ -23,5 +23,17 @@ public class SecondaryFrame extends JFrame {
         this.getContentPane().add(panel);
         this.pack();
         this.setLocationRelativeTo(null);
+    }
+
+    public void startFrame(final JPanel panel) {
+        this.add(panel);
+        this.pack();
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+        this.setResizable(false);
+    }
+
+    public void closeFrame() {
+        this.dispose();
     }
 }

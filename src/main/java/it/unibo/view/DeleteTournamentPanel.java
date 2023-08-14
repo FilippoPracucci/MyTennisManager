@@ -6,16 +6,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import it.unibo.controller.db.QueryManager;
+import it.unibo.model.EdizioneTorneo;
 import it.unibo.utils.Pair;
 
 public class DeleteTournamentPanel extends JPanel {
@@ -31,7 +32,7 @@ public class DeleteTournamentPanel extends JPanel {
     private static final String DELETE = "Elimina";
     private static final String CANCEL = "Annulla";
 
-    private final JLabel idTorneoLabel;
+    private final JLabel idTournamentLabel;
     private final JLabel typeLabel;
     private final JLabel rankLimitLabel;
     private final JLabel ageLimitLabel;
@@ -44,7 +45,7 @@ public class DeleteTournamentPanel extends JPanel {
     private final JButton delete;
     private final JButton cancel;
 
-    private int id;
+    private Optional<Integer> id;
 
     public DeleteTournamentPanel(final SecondaryFrame frame,
             final Dimension dim,
@@ -57,7 +58,7 @@ public class DeleteTournamentPanel extends JPanel {
         final int n = (int) (dim.getHeight() * 0.01);
         final Insets insets = new Insets(n, n, n, n);
 
-        this.idTorneoLabel = new JLabel(ID_TORNEO_LABEL);
+        this.idTournamentLabel = new JLabel(ID_TORNEO_LABEL);
         this.typeLabel = new JLabel(TYPE_LABEL);
         this.rankLimitLabel = new JLabel(RANK_LIMIT_LABEL);
         this.ageLimitLabel = new JLabel(AGE_LIMIT_LABEL);
@@ -70,19 +71,29 @@ public class DeleteTournamentPanel extends JPanel {
             ).get()
         ).stream().map(c -> c.getId()).toList(), idTorneoBox);
 
-        this.id = this.idTorneoBox.getModel().getElementAt(0);
-        
-        this.type = new JLabel(queryManager.findTorneo(this.id).get().getTipo().getNome());
-        this.rankLimit = new JLabel(queryManager.findTorneo(this.id).get().getLimiteCategoria().get().toString());
-        this.ageLimit = new JLabel(queryManager.findTorneo(this.id).get().getLimiteEta().get().toString());
-        this.prize = new JLabel(queryManager.findTorneo(this.id).get().getMontepremi().get().toString());
+        if (this.idTorneoBox.getItemCount() == 0) {
+            this.id = Optional.empty();
+        } else {
+            this.id = Optional.of((Integer) this.idTorneoBox.getModel().getSelectedItem());
+        }
+    
+        this.type = new JLabel();
+        this.rankLimit = new JLabel();
+        this.ageLimit = new JLabel();
+        this.prize = new JLabel();
+        if (this.id.isPresent()) {
+            this.type.setText(queryManager.findTorneo(this.id.get()).get().getTipo().getNome());
+            this.rankLimit.setText(queryManager.findTorneo(this.id.get()).get().getLimiteCategoria().get().toString());
+            this.ageLimit.setText(queryManager.findTorneo(this.id.get()).get().getLimiteEta().get().toString());
+            this.prize.setText(queryManager.findTorneo(this.id.get()).get().getMontepremi().get().toString());
+        }
 
         this.idTorneoBox.addItemListener(e -> {
-            this.id = ((Integer) this.idTorneoBox.getModel().getSelectedItem()).intValue();
-            this.type.setText(queryManager.findTorneo(this.id).get().getTipo().getNome());
-            this.rankLimit.setText(queryManager.findTorneo(this.id).get().getLimiteCategoria().get().toString());
-            this.ageLimit.setText(queryManager.findTorneo(this.id).get().getLimiteEta().get().toString());
-            this.prize.setText(queryManager.findTorneo(this.id).get().getMontepremi().get().toString());
+            this.id = Optional.of((Integer) this.idTorneoBox.getModel().getSelectedItem());
+            this.type.setText(queryManager.findTorneo(this.id.get()).get().getTipo().getNome());
+            this.rankLimit.setText(queryManager.findTorneo(this.id.get()).get().getLimiteCategoria().get().toString());
+            this.ageLimit.setText(queryManager.findTorneo(this.id.get()).get().getLimiteEta().get().toString());
+            this.prize.setText(queryManager.findTorneo(this.id.get()).get().getMontepremi().get().toString());
         });
 
         this.delete = new JButton(DELETE);
@@ -91,12 +102,12 @@ public class DeleteTournamentPanel extends JPanel {
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
-        startFrame(frame);
+        //startFrame(frame);
         cnst.gridy = 0;
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;
         cnst.gridx = 0;
-        this.addField(this.idTorneoLabel, this.idTorneoBox, cnst);
+        this.addField(this.idTournamentLabel, this.idTorneoBox, cnst);
         this.addField(this.typeLabel, this.type, cnst);
         this.addField(this.rankLimitLabel, this.rankLimit, cnst);
         this.addField(this.ageLimitLabel, this.ageLimit, cnst);
@@ -105,40 +116,57 @@ public class DeleteTournamentPanel extends JPanel {
         southPanel.add(this.cancel, cnst);
         this.add(southPanel, cnst);
 
-        this.delete.addActionListener(e -> {
-            queryManager.deleteTorneo(this.id);
-            JOptionPane.showMessageDialog(this, "Torneo eliminato con successo!");
-            frame.changePanel(new MenuOrganizzatore(frame, dim, queryManager, credentials));
-        });
+        if (!this.id.isPresent()) {
+            this.delete.setEnabled(false);
+        }
 
-        this.cancel.addActionListener(e -> {
-            final String[] options = { "Yes", "No" };
+        this.delete.addActionListener(e -> {
+            List<EdizioneTorneo> list = queryManager.findAllEdizioneByTorneo(queryManager.findTorneo(this.id.get()).get());
+            list.forEach(et -> queryManager.deleteEdizioneTorneo(new Pair<>(this.id.get(), et.getNumeroEdizione())));
+            queryManager.deleteTorneo(this.id.get());
+            final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Do you really want to quit?",
-                    "Quitting",
+                    "Verranno eliminate anche tutte le relative edizioni\n" +
+                    "Continuare?",
+                    "Informazione",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
                     options[1]);
             if (result == 0) {
-                closeFrame(frame);
+                JOptionPane.showMessageDialog(this, "Torneo eliminato con successo!");
+                frame.changePanel(new MenuOrganizzatore(frame, dim, queryManager, credentials));
+            }
+        });
+
+        this.cancel.addActionListener(e -> {
+            final String[] options = { "Sì", "No" };
+            final int result = JOptionPane.showOptionDialog(this,
+                    "Sei sicuro di voler uscire?",
+                    "Uscita",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[1]);
+            if (result == 0) {
+                frame.closeFrame();
             }
         });
     }
 
-    private void startFrame(final SecondaryFrame frame) {
+    /*private void startFrame(final SecondaryFrame frame) {
         frame.add(this);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setResizable(false);
     }
 
     private void closeFrame(final SecondaryFrame frame) {
         frame.dispose();
-    }
+    }*/
 
     private void addField(final JLabel label, final JComponent field, final GridBagConstraints cnst) {
         cnst.gridx = 0;

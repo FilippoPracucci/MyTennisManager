@@ -11,7 +11,6 @@ import java.util.Optional;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -72,7 +71,7 @@ public class AddTorneoPanel extends JPanel {
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
-        startFrame(frame);
+        //frame.startFrame(this);
         cnst.gridy = 0;
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;
@@ -119,33 +118,32 @@ public class AddTorneoPanel extends JPanel {
         });
 
         this.cancel.addActionListener(e -> {
-            final String[] options = { "Yes", "No" };
+            final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Do you really want to quit?",
-                    "Quitting",
+                    "Sei sicuro di voler uscire?",
+                    "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
                     options[1]);
             if (result == 0) {
-                closeFrame(frame);
+                frame.closeFrame();
             }
         });
     }
 
-    private void startFrame(final SecondaryFrame frame) {
+    /*private void startFrame(final SecondaryFrame frame) {
         frame.add(this);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setResizable(false);
     }
 
     private void closeFrame(final SecondaryFrame frame) {
         frame.dispose();
-    }
+    }*/
 
     private void addField(final JLabel label, final JComponent field, final GridBagConstraints cnst) {
         cnst.gridx = 0;

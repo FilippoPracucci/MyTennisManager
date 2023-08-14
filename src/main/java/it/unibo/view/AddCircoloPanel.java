@@ -8,7 +8,6 @@ import java.awt.Insets;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -40,7 +39,7 @@ public class AddCircoloPanel extends JPanel {
     private final JButton signUp;
     private final JButton cancel;
 
-    public AddCircoloPanel(final JFrame frame, final Dimension dim, final QueryManager queryManager, Pair<String, String> credentials) {
+    public AddCircoloPanel(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager, Pair<String, String> credentials) {
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final GridBagLayout layout = new GridBagLayout();
         final GridBagConstraints cnst = new GridBagConstraints();
@@ -63,7 +62,7 @@ public class AddCircoloPanel extends JPanel {
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
-        startFrame(frame);
+        frame.startFrame(this);
         cnst.gridy = 0;
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;
@@ -87,26 +86,26 @@ public class AddCircoloPanel extends JPanel {
                     this.phoneField.getText())
             );
             JOptionPane.showMessageDialog(this, "Circolo inserito con successo!");
-            closeFrame(frame);
+            frame.closeFrame();
         });
 
         this.cancel.addActionListener(e -> {
-            final String[] options = { "Yes", "No" };
+            final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Do you really want to quit?",
-                    "Quitting",
+                    "Sei sicuro di voler uscire?",
+                    "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
                     options[1]);
             if (result == 0) {
-                closeFrame(frame);
+                frame.closeFrame();
             }
         });
     }
 
-    private void startFrame(final JFrame frame) {
+    /*private void startFrame(final JFrame frame) {
         frame.add(this);
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -117,7 +116,7 @@ public class AddCircoloPanel extends JPanel {
 
     private void closeFrame(final JFrame frame) {
         frame.dispose();
-    }
+    }*/
 
     private void addField(final JLabel label, final JComponent field, final GridBagConstraints cnst) {
         cnst.gridx = 0;

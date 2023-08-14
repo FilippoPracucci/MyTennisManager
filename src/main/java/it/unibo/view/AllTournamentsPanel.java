@@ -1,10 +1,10 @@
 package it.unibo.view;
 
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import it.unibo.controller.db.QueryManager;
@@ -23,10 +23,9 @@ public class AllTournamentsPanel extends JPanel {
             final Dimension dim,
             final QueryManager queryManager,
             final Pair<String, String> credentials) {
+
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
-
-        this.setLayout(new GridLayout(100, 8));
 
         this.columns = List.of("Id_Torneo",
                 "Numero_Edizione",
@@ -36,7 +35,7 @@ public class AllTournamentsPanel extends JPanel {
                 "Limite_Categoria",
                 "Limite_Eta",
                 "Montepremi");
-        
+
         this.table = new JTable(
             queryManager.listTorneiToMatrix(
                 queryManager.findAllEdizioniByCircolo(
@@ -44,9 +43,12 @@ public class AllTournamentsPanel extends JPanel {
                         queryManager.findOrganizzatoreByCredentials(credentials.getX(), credentials.getY()).get().getId()
                     ).get()
                 ),
-            8),
-            this.columns.toArray());
+            this.columns.size()),
+        this.columns.toArray());
+        this.table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        JScrollPane scrollPane = new JScrollPane(this.table);
+        scrollPane.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(), Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
 
-        
+        this.add(scrollPane);
     }
 }
