@@ -25,7 +25,7 @@ public class DeleteEditionPanel extends JPanel {
     private static final double WIDTH_PERC = 0.6;
     private static final double HEIGHT_PERC = 0.5;
 
-    private static final String ID_TOURNAMENT_LABEL = "Id_Torneo";
+    private static final String ID_TOURNAMENT_LABEL = "Id torneo";
     private static final String N_EDITION_LABEL = "Numero edizione";
     private static final String START_DATE_LABEL = "Data di inizio";
     private static final String END_DATE_LABEL = "Data di fine";
@@ -144,7 +144,7 @@ public class DeleteEditionPanel extends JPanel {
         this.cancel.addActionListener(e -> {
             final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Sei sicuro di voler uscire?",
+                    "Sei sicuro di voler annullare?",
                     "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
@@ -157,17 +157,7 @@ public class DeleteEditionPanel extends JPanel {
         });
     }
 
-    /*private void startFrame(final SecondaryFrame frame) {
-        frame.add(this);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setResizable(false);
-    }
-
-    private void closeFrame(final SecondaryFrame frame) {
-        frame.dispose();
-    }*/
+    
 
     private void addField(final JLabel label, final JComponent field, final GridBagConstraints cnst) {
         cnst.gridx = 0;

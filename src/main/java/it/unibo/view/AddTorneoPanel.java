@@ -39,7 +39,7 @@ public class AddTorneoPanel extends JPanel {
     private final JLabel prizeLabel;
     private final JComboBox<String> type;
     private final JComboBox<Integer> rankLimit;
-    private final JTextField ageLimitField;
+    private final JComboBox<Integer> ageLimit;
     private final JTextField prizeField;
     private final JLabel info;
     private final JButton signUp;
@@ -58,10 +58,11 @@ public class AddTorneoPanel extends JPanel {
         this.prizeLabel = new JLabel(PRIZE_LABEL);
 
         this.type = new JComboBox<>();
-        createTypeList(type);
+        this.createTypeList(type);
         this.rankLimit = new JComboBox<>();
-        createRankList(2, 4, rankLimit);
-        this.ageLimitField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
+        this.createRankList(2, 4, rankLimit);
+        this.ageLimit = new JComboBox<>();
+        this.createAgeList(this.ageLimit);
         this.prizeField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
         this.info = new JLabel(INFO);
 
@@ -71,14 +72,13 @@ public class AddTorneoPanel extends JPanel {
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
-        //frame.startFrame(this);
         cnst.gridy = 0;
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;
         cnst.gridx = 0;
         this.addField(this.typeLabel, this.type, cnst);
         this.addField(this.rankLimitLabel, this.rankLimit, cnst);
-        this.addField(this.ageLimitLabel, this.ageLimitField, cnst);
+        this.addField(this.ageLimitLabel, this.ageLimit, cnst);
         this.addField(this.prizeLabel, this.prizeField, cnst);
         cnst.gridx = 0;
         this.add(this.info, cnst);
@@ -97,10 +97,10 @@ public class AddTorneoPanel extends JPanel {
             } else {
                 rankL = Optional.of((Integer) this.rankLimit.getModel().getSelectedItem());
             }
-            if (this.ageLimitField.getText().isBlank()) {
+            if (this.ageLimit.getModel().getSelectedItem().equals(this.ageLimit.getItemAt(0))) {
                 ageL = Optional.empty();
             } else {
-                ageL = Optional.of(Integer.valueOf(this.ageLimitField.getText()).intValue());
+                ageL = Optional.of(((Integer) this.ageLimit.getModel().getSelectedItem()).intValue());
             }
             if (this.prizeField.getText().isBlank()) {
                 prize = Optional.empty();
@@ -120,7 +120,7 @@ public class AddTorneoPanel extends JPanel {
         this.cancel.addActionListener(e -> {
             final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Sei sicuro di voler uscire?",
+                    "Sei sicuro di voler annullare?",
                     "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
@@ -132,18 +132,6 @@ public class AddTorneoPanel extends JPanel {
             }
         });
     }
-
-    /*private void startFrame(final SecondaryFrame frame) {
-        frame.add(this);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setResizable(false);
-    }
-
-    private void closeFrame(final SecondaryFrame frame) {
-        frame.dispose();
-    }*/
 
     private void addField(final JLabel label, final JComponent field, final GridBagConstraints cnst) {
         cnst.gridx = 0;
@@ -162,5 +150,12 @@ public class AddTorneoPanel extends JPanel {
 
     private void createTypeList(final JComboBox<String> box) {
         List.of(Tipo.values()).forEach(t -> box.addItem(t.getNome()));
+    }
+
+    private void createAgeList(final JComboBox<Integer> box) {
+        box.addItem(0);
+        for (int i = 10; i <= 18; i+=2) {
+            box.addItem(i);
+        }
     }
 }

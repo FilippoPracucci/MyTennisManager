@@ -75,10 +75,8 @@ public class SignInMenu extends JPanel {
                     options,
                     options[1]);
             if (result == 0) {
-                //frame.changePanel();
-                queryManager.findGiocatoreByCredentials(this.emailField.getText(), this.passwordField.getText());
+                frame.changePanel(new MenuGiocatore(frame, dim, queryManager, new Pair<>(this.emailField.getText(), this.passwordField.getText())));
             } else if (result == 1) {
-                //frame.setFocusableWindowState(false);
                 frame.changePanel(new MenuOrganizzatore(frame, dim, queryManager, new Pair<>(this.emailField.getText(), this.passwordField.getText())));
             } else {
                 frame.closeFrame();
@@ -88,7 +86,7 @@ public class SignInMenu extends JPanel {
         this.cancel.addActionListener(e -> {
             final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Sei sicuro di voler uscire?",
+                    "Sei sicuro di voler annullare?",
                     "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
@@ -100,19 +98,6 @@ public class SignInMenu extends JPanel {
             }
         });
     }
-
-    /*private void startFrame(final JFrame frame) {
-        frame.add(this);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.setResizable(false);
-    }
-
-    private void closeFrame(final JFrame frame) {
-        frame.dispose();
-    }*/
 
     private void addField(final JLabel label, final JTextField field, final GridBagConstraints cnst) {
         cnst.gridx = 0;

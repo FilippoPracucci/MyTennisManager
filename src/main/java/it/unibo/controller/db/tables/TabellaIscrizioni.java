@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,8 +35,8 @@ public class TabellaIscrizioni implements Table<Iscrizione, Integer> {
         try (final Statement statement = this.connection.createStatement()) {
             statement.executeUpdate(
                 "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Iscrizione INT NOT NULL PRIMARY KEY," +
-                        "Preferenza_Orario VARCHAR(10) CHECK (Preferenza_Orario in ('9:00-13:00', '15:00-21:00'))," +
+                        "Id_Iscrizione INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                        "Preferenza_Orario VARCHAR(12) CHECK (Preferenza_Orario in ('9:00-13:00', '15:00-21:00'))," +
                         "Id_Torneo INT NOT NULL," + 
                         "Numero_Edizione INT NOT NULL," + 
                         "Id_Utente INT," +
@@ -104,14 +105,25 @@ public class TabellaIscrizioni implements Table<Iscrizione, Integer> {
     @Override
     public boolean save(final Iscrizione iscrizione) {
         final String query = "INSERT INTO " + TABLE_NAME +
-                "(id, preferenza_orario, torneo, numero_edizione, utente, coppia) VALUES (?,?,?,?,?,?)";
+                "(Preferenza_Orario, Id_Torneo, Numero_Edizione, Id_Utente, Id_Coppia) VALUES (?,?,?,?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setInt(1, iscrizione.getId());
-            statement.setString(2, iscrizione.getPreferenzaOrario().orElse(null));
-            statement.setInt(3, iscrizione.getIdTorneo());
-            statement.setInt(4, iscrizione.getNumeroEdizione());
-            statement.setInt(5, iscrizione.getIdUtente().orElse(null));
-            statement.setInt(6, iscrizione.getIdCoppia().orElse(null));
+            if (iscrizione.getPreferenzaOrario().isPresent()) {
+                statement.setString(1, iscrizione.getPreferenzaOrario().get());
+            } else {
+                statement.setNull(1, Types.NULL);
+            }
+            statement.setInt(2, iscrizione.getIdTorneo());
+            statement.setInt(3, iscrizione.getNumeroEdizione());
+            if (iscrizione.getIdUtente().isPresent()) {
+                statement.setInt(4, iscrizione.getIdUtente().get());
+            } else {
+                statement.setNull(4, Types.NULL);
+            }
+            if (iscrizione.getIdCoppia().isPresent()) {
+                statement.setInt(5, iscrizione.getIdCoppia().get());
+            } else {
+                statement.setNull(5, Types.NULL);
+            }
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {

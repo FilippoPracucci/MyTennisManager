@@ -175,6 +175,46 @@ public class TabellaTornei implements Table<Torneo, Integer> {
         }
     }
 
+    public List<Torneo> findAllSingolariEligible(final int eta, final int categoria, final String sesso) {
+        String t;
+        if (sesso.contentEquals("M")) {
+            t = Tipo.SINGOLARE_MASCHILE.getNome();
+        } else {
+            t = Tipo.SINGOLARE_FEMMINILE.getNome();
+        }
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?)" +
+                " AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) AND Tipo = ?";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, eta);
+            statement.setInt(2, categoria);
+            statement.setString(3, t);
+            final ResultSet resultSet = statement.executeQuery();
+            return readTorneiFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<Torneo> findAllDoppiEligible(final int eta, final int categoria, final String sesso) {
+        String t;
+        if (sesso.contentEquals("M")) {
+            t = Tipo.DOPPIO_MASCHILE.getNome();
+        } else {
+            t = Tipo.DOPPIO_FEMMINILE.getNome();
+        }
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?)" +
+                " AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) AND Tipo = ?";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, eta);
+            statement.setInt(2, categoria);
+            statement.setString(3, t);
+            final ResultSet resultSet = statement.executeQuery();
+            return readTorneiFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public Integer getLastId() {
         final String query = "SELECT MAX(Id_Torneo) AS Id_Torneo FROM " + TABLE_NAME + " ORDER BY Id_Torneo DESC";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {

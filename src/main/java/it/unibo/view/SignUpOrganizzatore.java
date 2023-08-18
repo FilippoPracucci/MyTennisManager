@@ -89,7 +89,7 @@ public class SignUpOrganizzatore extends JPanel {
         this.cancel.addActionListener(e -> {
             final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Sei sicuro di voler uscire?",
+                    "Sei sicuro di voler annullare?",
                     "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
@@ -101,19 +101,6 @@ public class SignUpOrganizzatore extends JPanel {
             }
         });
     }
-
-    /*private void startFrame(final SecondaryFrame frame) {
-        frame.add(this);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.setResizable(false);
-    }
-
-    private void closeFrame(final SecondaryFrame frame) {
-        frame.dispose();
-    }*/
 
     private void addField(final JLabel label, final JTextField field, final GridBagConstraints cnst) {
         cnst.gridx = 0;

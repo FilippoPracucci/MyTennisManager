@@ -24,7 +24,7 @@ public class DeleteTournamentPanel extends JPanel {
     private static final double WIDTH_PERC = 0.6;
     private static final double HEIGHT_PERC = 0.5;
 
-    private static final String ID_TORNEO_LABEL = "Id_Torneo";
+    private static final String ID_TOURNAMENT_LABEL = "Id torneo";
     private static final String TYPE_LABEL = "Tipo";
     private static final String RANK_LIMIT_LABEL = "Limite di categoria *";
     private static final String AGE_LIMIT_LABEL = "Limite età *";
@@ -37,7 +37,7 @@ public class DeleteTournamentPanel extends JPanel {
     private final JLabel rankLimitLabel;
     private final JLabel ageLimitLabel;
     private final JLabel prizeLabel;
-    private final JComboBox<Integer> idTorneoBox;
+    private final JComboBox<Integer> idTournamentBox;
     private final JLabel type;
     private final JLabel rankLimit;
     private final JLabel ageLimit;
@@ -58,23 +58,23 @@ public class DeleteTournamentPanel extends JPanel {
         final int n = (int) (dim.getHeight() * 0.01);
         final Insets insets = new Insets(n, n, n, n);
 
-        this.idTournamentLabel = new JLabel(ID_TORNEO_LABEL);
+        this.idTournamentLabel = new JLabel(ID_TOURNAMENT_LABEL);
         this.typeLabel = new JLabel(TYPE_LABEL);
         this.rankLimitLabel = new JLabel(RANK_LIMIT_LABEL);
         this.ageLimitLabel = new JLabel(AGE_LIMIT_LABEL);
         this.prizeLabel = new JLabel(PRIZE_LABEL);
 
-        this.idTorneoBox = new JComboBox<>();
+        this.idTournamentBox = new JComboBox<>();
         this.createList(queryManager.findAllTorneoByCircolo(
             queryManager.findCircoloByOrganizzatore(
                 queryManager.findOrganizzatoreByCredentials(credentials.getX(), credentials.getY()).get().getId()
             ).get()
-        ).stream().map(c -> c.getId()).toList(), idTorneoBox);
+        ).stream().map(c -> c.getId()).toList(), idTournamentBox);
 
-        if (this.idTorneoBox.getItemCount() == 0) {
+        if (this.idTournamentBox.getItemCount() == 0) {
             this.id = Optional.empty();
         } else {
-            this.id = Optional.of((Integer) this.idTorneoBox.getModel().getSelectedItem());
+            this.id = Optional.of((Integer) this.idTournamentBox.getModel().getSelectedItem());
         }
     
         this.type = new JLabel();
@@ -88,8 +88,8 @@ public class DeleteTournamentPanel extends JPanel {
             this.prize.setText(queryManager.findTorneo(this.id.get()).get().getMontepremi().get().toString());
         }
 
-        this.idTorneoBox.addItemListener(e -> {
-            this.id = Optional.of((Integer) this.idTorneoBox.getModel().getSelectedItem());
+        this.idTournamentBox.addItemListener(e -> {
+            this.id = Optional.of((Integer) this.idTournamentBox.getModel().getSelectedItem());
             this.type.setText(queryManager.findTorneo(this.id.get()).get().getTipo().getNome());
             this.rankLimit.setText(queryManager.findTorneo(this.id.get()).get().getLimiteCategoria().get().toString());
             this.ageLimit.setText(queryManager.findTorneo(this.id.get()).get().getLimiteEta().get().toString());
@@ -107,7 +107,7 @@ public class DeleteTournamentPanel extends JPanel {
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;
         cnst.gridx = 0;
-        this.addField(this.idTournamentLabel, this.idTorneoBox, cnst);
+        this.addField(this.idTournamentLabel, this.idTournamentBox, cnst);
         this.addField(this.typeLabel, this.type, cnst);
         this.addField(this.rankLimitLabel, this.rankLimit, cnst);
         this.addField(this.ageLimitLabel, this.ageLimit, cnst);
@@ -143,7 +143,7 @@ public class DeleteTournamentPanel extends JPanel {
         this.cancel.addActionListener(e -> {
             final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Sei sicuro di voler uscire?",
+                    "Sei sicuro di voler uscirannullaree?",
                     "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
@@ -155,18 +155,6 @@ public class DeleteTournamentPanel extends JPanel {
             }
         });
     }
-
-    /*private void startFrame(final SecondaryFrame frame) {
-        frame.add(this);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setResizable(false);
-    }
-
-    private void closeFrame(final SecondaryFrame frame) {
-        frame.dispose();
-    }*/
 
     private void addField(final JLabel label, final JComponent field, final GridBagConstraints cnst) {
         cnst.gridx = 0;

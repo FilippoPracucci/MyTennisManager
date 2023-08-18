@@ -34,7 +34,7 @@ public class TabellaCoppie implements Table<Coppia, Integer> {
         try (final Statement statement = this.connection.createStatement()) {
             statement.executeUpdate(
                 "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Coppia INT NOT NULL PRIMARY KEY" +
+                        "Id_Coppia INT NOT NULL AUTO_INCREMENT PRIMARY KEY" +
                     ")");
             return true;
         } catch (final SQLException e) {

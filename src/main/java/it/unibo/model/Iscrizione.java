@@ -4,17 +4,17 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Iscrizione {
-    private final int id;
+    private final Integer id;
     private final Optional<String> preferenzaOrario;
-    private final Optional<Integer> idUtente;
+    private final Optional<Integer> idGiocatore;
     private final Optional<Integer> idCoppia;
-    private final int idTorneo;
-    private final int numeroEdizione;
+    private final Integer idTorneo;
+    private final Integer numeroEdizione;
 
-    public Iscrizione(final int id,
+    public Iscrizione(final Integer id,
             final Optional<String> pref_orario,
-            final int torneo,
-            final int n_edizione,
+            final Integer torneo,
+            final Integer n_edizione,
             final Optional<Integer> utente,
             final Optional<Integer> coppia) {
 
@@ -22,28 +22,28 @@ public class Iscrizione {
         this.preferenzaOrario = Objects.requireNonNull(pref_orario);
         this.idTorneo = torneo;
         this.numeroEdizione = n_edizione;
-        this.idUtente = Objects.requireNonNull(utente);
+        this.idGiocatore = Objects.requireNonNull(utente);
         this.idCoppia = Objects.requireNonNull(coppia);
     }
 
-    public Iscrizione(final int id,
+    public Iscrizione(final Integer id,
             final String preferenza_orario,
-            final int torneo,
-            final int n_edizione,
-            final int utente,
-            final int coppia) {
+            final Integer torneo,
+            final Integer n_edizione,
+            final Integer utente,
+            final Integer coppia) {
         this(id, Optional.ofNullable(preferenza_orario), torneo, n_edizione, Optional.ofNullable(utente), Optional.ofNullable(coppia));
    }
 
-   public Iscrizione(final int id,
-            final int torneo,
-            final int n_edizione,
-            final int utente,
-            final int coppia) {
+   public Iscrizione(final Integer id,
+            final Integer torneo,
+            final Integer n_edizione,
+            final Integer utente,
+            final Integer coppia) {
         this(id, Optional.empty(), torneo, n_edizione, Optional.ofNullable(utente), Optional.ofNullable(coppia));
    }
 
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
 
@@ -52,18 +52,18 @@ public class Iscrizione {
     }
 
     public Optional<Integer> getIdUtente() {
-        return this.idUtente;
+        return this.idGiocatore;
     }
 
     public Optional<Integer> getIdCoppia() {
         return this.idCoppia;
     }
 
-    public int getIdTorneo() {
+    public Integer getIdTorneo() {
         return this.idTorneo;
     }
 
-    public int getNumeroEdizione() {
+    public Integer getNumeroEdizione() {
         return this.numeroEdizione;
     }
 }

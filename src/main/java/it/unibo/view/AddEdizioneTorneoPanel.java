@@ -25,7 +25,7 @@ public class AddEdizioneTorneoPanel extends JPanel {
     private static final double WIDTH_PERC = 0.6;
     private static final double HEIGHT_PERC = 0.5;
 
-    private static final String ID_TORNEO_LABEL = "Id torneo";
+    private static final String ID_TOURNAMENT_LABEL = "Id torneo";
     private static final String N_EDITION_LABEL = "Numero edizione";
     private static final String START_DATE_LABEL = "Data inizio";
     private static final String END_DATE_LABEL = "Data fine";
@@ -33,12 +33,12 @@ public class AddEdizioneTorneoPanel extends JPanel {
     private static final String SIGNUP = "Aggiungi";
     private static final String CANCEL = "Annulla";
 
-    private final JLabel idTorneoLabel;
+    private final JLabel idTournamentLabel;
     private final JLabel nEditionLabel;
     private final JLabel startDateLabel;
     private final JLabel endDateLabel;
     private final JLabel clubLabel;
-    private final JComboBox<Integer> idTorneo;
+    private final JComboBox<Integer> idTournament;
     private final JLabel nEdition;
     private final JComboBox<Integer> startYear;
     private final JComboBox<Integer> startMonth;
@@ -68,13 +68,13 @@ public class AddEdizioneTorneoPanel extends JPanel {
         final int n = (int) (dim.getHeight() * 0.01);
         final Insets insets = new Insets(n, n, n, n);
 
-        this.idTorneoLabel = new JLabel(ID_TORNEO_LABEL);
+        this.idTournamentLabel = new JLabel(ID_TOURNAMENT_LABEL);
         this.nEditionLabel = new JLabel(N_EDITION_LABEL);
         this.startDateLabel = new JLabel(START_DATE_LABEL);
         this.endDateLabel = new JLabel(END_DATE_LABEL);
         this.clubLabel = new JLabel(CLUB_LABEL);
 
-        this.idTorneo = new JComboBox<>();
+        this.idTournament = new JComboBox<>();
         this.nEdition = new JLabel();
         this.clubName = new JLabel();
         this.startYear = new JComboBox<>();
@@ -127,16 +127,16 @@ public class AddEdizioneTorneoPanel extends JPanel {
         );
 
         if (idT.isPresent()) {
-            this.idTorneo.addItem(idT.get());
+            this.idTournament.addItem(idT.get());
             this.numEdizione = 1;
             this.nEdition.setText(String.valueOf(this.numEdizione));
         } else {
-            this.createTournamentsList(this.idTorneo, queryManager, this.IdClub);
-            this.idTorneo.setSelectedItem(null);
+            this.createTournamentsList(this.idTournament, queryManager, this.IdClub);
+            this.idTournament.setSelectedItem(null);
         }
 
-        this.idTorneo.addItemListener(e -> {
-            this.numEdizione = queryManager.getNumeroEdizione(queryManager.findTorneo((Integer) this.idTorneo.getModel().getSelectedItem()).get()) + 1;
+        this.idTournament.addItemListener(e -> {
+            this.numEdizione = queryManager.getNumeroEdizione(queryManager.findTorneo((Integer) this.idTournament.getModel().getSelectedItem()).get()) + 1;
             this.nEdition.setText(String.valueOf(this.numEdizione));
         });
 
@@ -151,7 +151,7 @@ public class AddEdizioneTorneoPanel extends JPanel {
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;
         cnst.gridx = 0;
-        this.addField(this.idTorneoLabel, this.idTorneo, cnst);
+        this.addField(this.idTournamentLabel, this.idTournament, cnst);
         this.addField(this.nEditionLabel, this.nEdition, cnst);
         cnst.gridx = 0;
         this.add(this.startDateLabel, cnst);
@@ -180,7 +180,7 @@ public class AddEdizioneTorneoPanel extends JPanel {
 
         this.signUp.addActionListener(e -> {
             queryManager.addEdizioneTorneo(queryManager.createEdizioneTorneo(
-                (Integer) this.idTorneo.getModel().getSelectedItem(),
+                (Integer) this.idTournament.getModel().getSelectedItem(),
                 Integer.valueOf(this.numEdizione),
                 Utils.buildDate(
                     ((Integer) startDay.getModel().getSelectedItem()).intValue(), 
@@ -199,7 +199,7 @@ public class AddEdizioneTorneoPanel extends JPanel {
         this.cancel.addActionListener(e -> {
             final String[] options = { "Sì", "No" };
             final int result = JOptionPane.showOptionDialog(this,
-                    "Sei sicuro di voler uscire?",
+                    "Sei sicuro di voler annullare?",
                     "Uscita",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
@@ -211,18 +211,6 @@ public class AddEdizioneTorneoPanel extends JPanel {
             }
         });
     }
-
-    /*private void startFrame(final SecondaryFrame frame) {
-        frame.add(this);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setResizable(false);
-    }
-
-    private void closeFrame(final SecondaryFrame frame) {
-        frame.dispose();
-    }*/
 
     private void addField(final JLabel label, final JComponent field, final GridBagConstraints cnst) {
         cnst.gridx = 0;
@@ -244,7 +232,7 @@ public class AddEdizioneTorneoPanel extends JPanel {
         }
     }
 
-    private final void createTournamentsList(final JComboBox<Integer> box, final QueryManager qM, final Integer idCircolo) {
+    private void createTournamentsList(final JComboBox<Integer> box, final QueryManager qM, final Integer idCircolo) {
         qM.findAllTorneoByCircolo(qM.findCircolo(idCircolo).get()).forEach(t -> box.addItem(t.getId()));
     }
 }

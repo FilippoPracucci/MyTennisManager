@@ -36,8 +36,8 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
             statement.executeUpdate(
                 "CREATE TABLE " + TABLE_NAME + " (" +
                         "Id_Coppia INT NOT NULL," +
-                        "Id_Utente INT NOT NULL," +
-                        "PRIMARY KEY (Id_Coppia, Id_Utente)" +
+                        "Id_Giocatore INT NOT NULL," +
+                        "PRIMARY KEY (Id_Coppia, Id_Giocatore)" +
                     ")");
             return true;
         } catch (final SQLException e) {
@@ -57,7 +57,7 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
 
     @Override
     public Optional<Unione> findByPrimaryKey(final Pair<Integer, Integer> key) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Coppia = ? AND Id_Utente = ?";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Coppia = ? AND Id_Giocatore = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, key.getX());
             statement.setInt(2, key.getY());
@@ -77,9 +77,9 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
                 final int idCoppia = resultSet.getInt("Id_Coppia");
-                final int idUtente = resultSet.getInt("Id_Utente");
+                final int idGiocatore = resultSet.getInt("Id_Giocatore");
                 // After retrieving all the data we create a Student object
-                final Unione unione = new Unione(idCoppia, idUtente);
+                final Unione unione = new Unione(idCoppia, idGiocatore);
                 unioni.add(unione);
             }
         } catch (final SQLException e) {}
@@ -98,10 +98,10 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
 
     @Override
     public boolean save(final Unione unione) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(Id_Coppia, Id_Utente) VALUES (?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(Id_Coppia, Id_Giocatore) VALUES (?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, unione.getIdCoppia());
-            statement.setInt(2, unione.getIdUtente());
+            statement.setInt(2, unione.getIdGiocatore());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -121,7 +121,7 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
 
     @Override
     public boolean delete(final Pair<Integer, Integer> key) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE Id_Coppia = ? AND Id_Utente = ?";
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE Id_Coppia = ? AND Id_Giocatore = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, key.getX());
             statement.setInt(2, key.getY());
@@ -129,5 +129,58 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public List<Integer> findAllEligible(final String sesso) {
+        final String query = "SELECT u.Id_Coppia FROM " + TABLE_NAME + " AS u " +
+            "WHERE u.Id_Giocatore IN (" +
+                "SELECT g.Id_Utente FROM GIOCATORI AS g " +
+                "WHERE g.Sesso = ?) " +
+            "GROUP BY u.Id_Coppia " +
+            "HAVING COUNT(*) = 1";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, sesso);
+            final ResultSet resultSet = statement.executeQuery();
+            return readIdCoppiaFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<Integer> findAllCoppieOfGiocatore(final Integer id) {
+        final String query = "SELECT u.Id_Coppia FROM " + TABLE_NAME + " AS u " +
+            "WHERE u.Id_Giocatore = ?";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            final ResultSet resultSet = statement.executeQuery();
+            return readIdCoppiaFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public Pair<Integer, Integer> findIdGiocatoriOfCoppia(final Integer idCoppia) {
+        List<Integer> idGiocatori;
+        final String query = "SELECT Id_Giocatore FROM " + TABLE_NAME +
+            "WHERE Id_Coppia = ?";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, idCoppia);
+            final ResultSet resultSet = statement.executeQuery();
+            idGiocatori = readIdCoppiaFromResultSet(resultSet);
+            return new Pair<>(idGiocatori.get(0), idGiocatori.get(1));
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private List<Integer> readIdCoppiaFromResultSet(final ResultSet resultSet) {
+        final List<Integer> ids = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                final int idCoppia = resultSet.getInt("Id_Coppia");
+                ids.add(idCoppia);
+            }
+        } catch (final SQLException e) {}
+        return ids;
     }
 }

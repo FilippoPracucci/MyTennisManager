@@ -1,11 +1,7 @@
 package it.unibo.controller.db;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -18,15 +14,20 @@ import it.unibo.controller.db.tables.TabellaIscrizioni;
 import it.unibo.controller.db.tables.TabellaOrganizzatori;
 import it.unibo.controller.db.tables.TabellaTornei;
 import it.unibo.controller.db.tables.TabellaUnioni;
+import it.unibo.controller.db.views.ViewTornei;
+import it.unibo.controller.db.views.ViewUnioni;
 import it.unibo.model.Circolo;
+import it.unibo.model.CompagnoUnioni;
+import it.unibo.model.Coppia;
 import it.unibo.model.EdizioneTorneo;
 import it.unibo.model.Giocatore;
+import it.unibo.model.Iscrizione;
 import it.unibo.model.Organizzatore;
 import it.unibo.model.Torneo;
-import it.unibo.model.ViewTornei;
+import it.unibo.model.Unione;
+import it.unibo.model.TorneiWithEditions;
 import it.unibo.model.Torneo.Tipo;
 import it.unibo.utils.Pair;
-import it.unibo.utils.Utils;
 
 public class QueryManager {
 
@@ -38,6 +39,8 @@ public class QueryManager {
     private final TabellaOrganizzatori organizzatore;
     private final TabellaTornei torneo;
     private final TabellaUnioni unione;
+    private final ViewTornei viewTornei;
+    private final ViewUnioni viewUnioni;
 
     public QueryManager(final ConnectionProvider connectionProvider) {
         this.circolo = new TabellaCircoli(connectionProvider.getMySQLConnection());
@@ -48,6 +51,8 @@ public class QueryManager {
         this.organizzatore = new TabellaOrganizzatori(connectionProvider.getMySQLConnection());
         this.torneo = new TabellaTornei(connectionProvider.getMySQLConnection());
         this.unione = new TabellaUnioni(connectionProvider.getMySQLConnection());
+        this.viewTornei = new ViewTornei(connectionProvider.getMySQLConnection());
+        this.viewUnioni = new ViewUnioni(connectionProvider.getMySQLConnection());
     }
 
     public Organizzatore createOrganizzatore(final String nome,
@@ -154,6 +159,58 @@ public class QueryManager {
         return this.torneo.findAllByCircolo(circolo.getId());
     }
 
+    public List<Torneo> findAllTorneoSingolareEligible(final Giocatore giocatore) {
+        final char first = giocatore.getClassifica().charAt(0);
+        final int cat;
+        switch (first) {
+            case '2':
+                cat = 2;
+                break;
+            case '3':
+                cat = 3;
+                break;
+            default:
+                cat = 4;
+                break;
+        }
+        return this.torneo.findAllSingolariEligible(giocatore.getEta(), cat, giocatore.getSesso());
+    }
+
+    public List<Torneo> findAllTorneoDoppioEligible(final Pair<Giocatore, Giocatore> coppia) {
+        final char first1 = coppia.getX().getClassifica().charAt(0);
+        final char first2 = coppia.getY().getClassifica().charAt(0);
+        final int cat;
+        if (first1 < first2) {
+            switch (first1) {
+                case '2':
+                    cat = 2;
+                    break;
+                case '3':
+                    cat = 3;
+                    break;
+                default:
+                    cat = 4;
+                    break;
+            }
+        } else {
+            switch (first2) {
+                case '2':
+                    cat = 2;
+                    break;
+                case '3':
+                    cat = 3;
+                    break;
+                default:
+                    cat = 4;
+                    break;
+            }
+        }
+        return this.torneo.findAllDoppiEligible(
+            (coppia.getX().getEta() < coppia.getY().getEta()) ? coppia.getY().getEta() : coppia.getX().getEta(),
+            cat,
+            coppia.getX().getSesso());
+    }
+
     public Integer getIdLastTorneo() {
         return this.torneo.getLastId();
     }
@@ -162,13 +219,13 @@ public class QueryManager {
         this.torneo.delete(id);
     }
 
-    public EdizioneTorneo createEdizioneTorneo(final Integer id_torneo,
-            final Integer n_edizione,
-            final Date d_inizio,
-            final Date d_fine,
+    public EdizioneTorneo createEdizioneTorneo(final Integer idTorneo,
+            final Integer nEdizione,
+            final Date dInizio,
+            final Date dFine,
             final Integer circolo) {
 
-        return new EdizioneTorneo(id_torneo, n_edizione, d_inizio, d_fine, circolo);
+        return new EdizioneTorneo(idTorneo, nEdizione, dInizio, dFine, circolo);
     }
 
     public void addEdizioneTorneo(final EdizioneTorneo eTorneo) {
@@ -191,50 +248,10 @@ public class QueryManager {
         return this.edizioneTorneo.findAllByTorneo(torneo.getId());
     }
 
-    public List<ViewTornei> findAllEdizioniByCircolo(final Circolo circolo) {
-        final String query =
-            "SELECT t.Id_Torneo, et.Numero_Edizione, t.Tipo, et.Data_Inizio, et.Data_Fine, t.Limite_Categoria, t.Limite_Eta, t.Montepremi " +
-            "FROM " + this.torneo.getTableName() + " t " +
-            "JOIN " + this.edizioneTorneo.getTableName() + " et " +
-            "ON (t.Id_Torneo = et.Id_Torneo) " +
-            "WHERE Id_Circolo = ?";
-        try (final PreparedStatement statement = this.edizioneTorneo.getConnection().prepareStatement(query)) {
-            statement.setInt(1, circolo.getId());
-            final ResultSet resultSet = statement.executeQuery();
-            return readViewTorneiFromResultSet(resultSet);
-        } catch (final SQLException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private List<ViewTornei> readViewTorneiFromResultSet(final ResultSet resultSet) {
-        final List<ViewTornei> tornei = new ArrayList<>();
-        try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
-            while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
-                final Integer idTorneo = resultSet.getInt("Id_Torneo");
-                final Integer nEdizione = resultSet.getInt("Numero_Edizione");
-                final Tipo tipo = Tipo.getTipo(resultSet.getString("Tipo"));
-                final Date dInizio = Utils.sqlDateToDate(resultSet.getDate("Data_Inizio"));
-                final Date dFine = Utils.sqlDateToDate(resultSet.getDate("Data_Fine"));
-                final Optional<Integer> limite_categoria = Optional.ofNullable(resultSet.getInt("Limite_Categoria"));
-                final Optional<Integer> limite_eta = Optional.ofNullable(resultSet.getInt("Limite_Eta"));
-                final Optional<Integer> montepremi = Optional.ofNullable(resultSet.getInt("Montepremi"));
-                // After retrieving all the data we create a Student object
-                final ViewTornei torneo = new ViewTornei(idTorneo, nEdizione, tipo, dInizio, dFine, limite_categoria, limite_eta, montepremi);
-                tornei.add(torneo);
-            }
-        } catch (final SQLException e) {}
-        return tornei;
-    }
-
-    public Object[][] listTorneiToMatrix(final List<ViewTornei> list, final int col) {
+    public Object[][] listTorneiToMatrix(final List<TorneiWithEditions> list, final int col) {
         Object[][] matrix = new Object[list.size()][col];
         DateFormat df = new SimpleDateFormat("dd-MM-YYYY");
-        ViewTornei vt;
+        TorneiWithEditions vt;
         int j = 0;
 
         for (int i = 0; i < list.size(); i++) {
@@ -247,6 +264,97 @@ public class QueryManager {
             matrix[i][j++] = vt.getLimCategoria().orElse(null);
             matrix[i][j++] = vt.getLimEta().orElse(null);
             matrix[i][j++] = vt.getMontepremi().orElse(null);
+            matrix[i][j++] = vt.getIdCircolo();
+            j = 0;
+        }
+
+        return matrix;
+    }
+
+    public Iscrizione createIscrizione(final Integer idIscrizione,
+            final Optional<String> prefOrario,
+            final Integer idTorneo,
+            final Integer nEdizione,
+            final Optional<Integer> idUtente,
+            final Optional<Integer> idCoppia) {
+
+        return new Iscrizione(idIscrizione, prefOrario, idTorneo, nEdizione, idUtente, idCoppia);
+    }
+
+    public void addIscrizione(final Iscrizione iscrizione) {
+        this.iscrizione.save(iscrizione);
+    }
+
+    public List<TorneiWithEditions> findAllEdizioniByCircolo(final Circolo circolo) {
+        return this.viewTornei.findAllEdizioniByCircolo(circolo);
+    }
+
+    public List<TorneiWithEditions> findAllEligibleByPlayer(final Giocatore giocatore) {
+        return this.viewTornei.findAllEligibleByPlayer(giocatore);
+    }
+
+    public List<TorneiWithEditions> findAllFiltered(final Giocatore giocatore,
+            final Optional<Integer> cat,
+            final Optional<Integer> eta,
+            final Optional<String> data) {
+        return this.viewTornei.findAllFiltered(giocatore, cat, eta, data);
+    }
+
+    public Coppia createCoppia(final Integer id) {
+        return new Coppia(id);
+    }
+
+    public int addCoppia(final Coppia coppia) {
+        this.coppia.save(coppia);
+        return coppia.getId();
+    }
+
+    public Optional<Coppia> findCoppia(final Integer id) {
+        return this.coppia.findByPrimaryKey(id);
+    }
+
+    public Unione createUnione(final Integer idCoppia, final Integer idUtente) {
+        return new Unione(idCoppia, idUtente);
+    }
+
+    public void addUnione(final Unione unione) {
+        this.unione.save(unione);
+    }
+
+    public List<Integer> findAllEligibleUnioni(final Giocatore giocatore) {
+        return this.unione.findAllEligible(giocatore.getSesso());
+    }
+
+    public List<Integer> findAllPlayerCouples(final Giocatore giocatore) {
+        return this.unione.findAllCoppieOfGiocatore(giocatore.getId());
+    }
+
+    public Pair<Giocatore, Giocatore> findGiocatoriOfCoppia(final Coppia coppia) {
+        final Pair<Integer, Integer> ids = this.unione.findIdGiocatoriOfCoppia(coppia.getId());
+        return new Pair<Giocatore, Giocatore>(this.findGiocatore(ids.getX()).get(), this.findGiocatore(ids.getY()).get());
+    }
+
+    public List<CompagnoUnioni> findAllUnioniByGiocatore(final Giocatore giocatore) {
+        return this.viewUnioni.findAllMyUnioni(giocatore.getId());
+    }
+
+    public List<CompagnoUnioni> findAllEligibleCompagniUnioneForGiocatore(final Giocatore giocatore) {
+        return this.viewUnioni.findAllEligibleUnioni(giocatore.getId(), giocatore.getSesso());
+    }
+
+    public Object[][] listUnioniToMatrix(final List<CompagnoUnioni> list, final int col) {
+        Object[][] matrix = new Object[list.size()][col];
+        CompagnoUnioni cU;
+        int j = 0;
+
+        for (int i = 0; i < list.size(); i++) {
+            cU = list.get(i);
+            matrix[i][j++] = cU.getIdCoppia();
+            matrix[i][j++] = cU.getIdUtente();
+            matrix[i][j++] = cU.getNome();
+            matrix[i][j++] = cU.getCognome();
+            matrix[i][j++] = cU.getClassifica();
+            matrix[i][j++] = cU.getSesso();
             j = 0;
         }
 

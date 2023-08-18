@@ -1,13 +1,13 @@
 package it.unibo.model;
 
 public class Coppia {
-    private final int id;
+    private final Integer id;
 
-    public Coppia(final int id) {
+    public Coppia(final Integer id) {
         this.id = id;
     }
     
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
 }

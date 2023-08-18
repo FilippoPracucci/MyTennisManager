@@ -46,8 +46,8 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
                         "Data_Inizio DATE NOT NULL," + 
                         "Data_Fine DATE NOT NULL," +
                         "Id_Circolo INT NOT NULL," +
-                        "PRIMARY KEY(Id_Torneo, Numero_Edizione)" +
-                        //"CONSTRAINTS torneoCircolo UNIQUE(Id_Torneo, Id_Circolo)" +
+                        "PRIMARY KEY(Id_Torneo, Numero_Edizione)," +
+                        "UNIQUE(Id_Torneo, Numero_Edizione, Id_Circolo)" +
                     ")");
             return true;
         } catch (final SQLException e) {

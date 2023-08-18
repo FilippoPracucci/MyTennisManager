@@ -1,19 +1,19 @@
 package it.unibo.model;
 
 public class Unione {
-    private final int idCoppia;
-    private final int idUtente;
+    private final Integer idCoppia;
+    private final Integer idGiocatore;
 
-    public Unione(final int coppia, final int utente) {
+    public Unione(final Integer coppia, final Integer giocatore) {
         this.idCoppia = coppia;
-        this.idUtente = utente;
+        this.idGiocatore = giocatore;
     }
 
-    public int getIdCoppia() {
+    public Integer getIdCoppia() {
         return this.idCoppia;
     }
 
-    public int getIdUtente() {
-        return this.idUtente;
+    public Integer getIdGiocatore() {
+        return this.idGiocatore;
     }
 }
