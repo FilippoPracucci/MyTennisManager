@@ -131,25 +131,13 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
         }
     }
 
-    public List<Integer> findAllEligible(final String sesso) {
-        final String query = "SELECT u.Id_Coppia FROM " + TABLE_NAME + " AS u " +
-            "WHERE u.Id_Giocatore IN (" +
-                "SELECT g.Id_Utente FROM GIOCATORI AS g " +
-                "WHERE g.Sesso = ?) " +
-            "GROUP BY u.Id_Coppia " +
-            "HAVING COUNT(*) = 1";
-        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, sesso);
-            final ResultSet resultSet = statement.executeQuery();
-            return readIdCoppiaFromResultSet(resultSet);
-        } catch (final SQLException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     public List<Integer> findAllCoppieOfGiocatore(final Integer id) {
         final String query = "SELECT u.Id_Coppia FROM " + TABLE_NAME + " AS u " +
-            "WHERE u.Id_Giocatore = ?";
+            "WHERE u.Id_Coppia IN (" +
+                "SELECT Id_Coppia FROM " + TABLE_NAME +
+                " WHERE Id_Giocatore = ?) " +
+            "GROUP BY u.Id_Coppia " +
+            "HAVING COUNT(*) = 2";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, id);
             final ResultSet resultSet = statement.executeQuery();
@@ -162,11 +150,11 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
     public Pair<Integer, Integer> findIdGiocatoriOfCoppia(final Integer idCoppia) {
         List<Integer> idGiocatori;
         final String query = "SELECT Id_Giocatore FROM " + TABLE_NAME +
-            "WHERE Id_Coppia = ?";
+            " WHERE Id_Coppia = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, idCoppia);
             final ResultSet resultSet = statement.executeQuery();
-            idGiocatori = readIdCoppiaFromResultSet(resultSet);
+            idGiocatori = readIdGiocatoriFromResultSet(resultSet);
             return new Pair<>(idGiocatori.get(0), idGiocatori.get(1));
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -179,6 +167,17 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
             while (resultSet.next()) {
                 final int idCoppia = resultSet.getInt("Id_Coppia");
                 ids.add(idCoppia);
+            }
+        } catch (final SQLException e) {}
+        return ids;
+    }
+
+    private List<Integer> readIdGiocatoriFromResultSet(final ResultSet resultSet) {
+        final List<Integer> ids = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                final int idGiocatore = resultSet.getInt("Id_Giocatore");
+                ids.add(idGiocatore);
             }
         } catch (final SQLException e) {}
         return ids;

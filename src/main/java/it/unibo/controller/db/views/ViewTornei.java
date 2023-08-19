@@ -99,7 +99,7 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
         }
     }
 
-    public List<TorneiWithEditions> findAllEligibleByPlayer (final Giocatore giocatore) {
+    public List<TorneiWithEditions> findAllSingolariEligibleByPlayer (final Giocatore giocatore) {
         String t;
         final char first = giocatore.getClassifica().charAt(0);
         final int cat;
@@ -126,6 +126,57 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
             "AND Tipo = ?";
         try (final PreparedStatement statement = this.getConnection().prepareStatement(query)) {
             statement.setInt(1, giocatore.getEta());
+            statement.setInt(2, cat);
+            statement.setString(3, t);
+            final ResultSet resultSet = statement.executeQuery();
+            return this.readTorneiWithEditionsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<TorneiWithEditions> findAllDoppiEligibleByCoppia (final Pair<Giocatore, Giocatore> coppia) {
+        final char first1 = coppia.getX().getClassifica().charAt(0);
+        final char first2 = coppia.getY().getClassifica().charAt(0);
+        final int cat;
+        final String t;
+        if (coppia.getX().getSesso().contentEquals("M")) {
+            t = Tipo.DOPPIO_MASCHILE.getNome();
+        } else {
+            t = Tipo.DOPPIO_FEMMINILE.getNome();
+        }
+        if (first1 < first2) {
+            switch (first1) {
+                case '2':
+                    cat = 2;
+                    break;
+                case '3':
+                    cat = 3;
+                    break;
+                default:
+                    cat = 4;
+                    break;
+            }
+        } else {
+            switch (first2) {
+                case '2':
+                    cat = 2;
+                    break;
+                case '3':
+                    cat = 3;
+                    break;
+                default:
+                    cat = 4;
+                    break;
+            }
+        }
+        final String query =
+            "SELECT * FROM " + VIEW_NAME +
+            " WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
+            "AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) " +
+            "AND Tipo = ?";
+        try (final PreparedStatement statement = this.getConnection().prepareStatement(query)) {
+            statement.setInt(1, (coppia.getX().getEta() < coppia.getY().getEta()) ? coppia.getY().getEta() : coppia.getX().getEta());
             statement.setInt(2, cat);
             statement.setString(3, t);
             final ResultSet resultSet = statement.executeQuery();

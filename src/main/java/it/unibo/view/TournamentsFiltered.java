@@ -78,7 +78,7 @@ public class TournamentsFiltered extends JPanel {
         this.createList(2010, LocalDateTime.now().getYear(), this.yearFilter);
 
         this.model = new DefaultTableModel(queryManager.listTorneiToMatrix(
-                queryManager.findAllEligibleByPlayer(
+                queryManager.findAllSingolariEligibleByPlayer(
                     queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()
                 ), this.columns.size()),
             this.columns.toArray());
@@ -118,7 +118,7 @@ public class TournamentsFiltered extends JPanel {
             this.ageFilter.setSelectedIndex(0);
             this.yearFilter.setSelectedIndex(0);
             this.model = new DefaultTableModel(queryManager.listTorneiToMatrix(
-                queryManager.findAllEligibleByPlayer(
+                queryManager.findAllSingolariEligibleByPlayer(
                     queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()
                 ), this.columns.size()),
             this.columns.toArray());

@@ -2,6 +2,7 @@ package it.unibo.view;
 
 import java.awt.Dimension;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,7 +23,8 @@ public class TournamentsEligiblePanel extends JPanel {
     public TournamentsEligiblePanel(final SecondaryFrame frame,
             final Dimension dim,
             final QueryManager queryManager,
-            final Pair<String, String> credentials) {
+            final Pair<String, String> credentials,
+            final Optional<Integer> couple) {
 
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
@@ -37,12 +39,22 @@ public class TournamentsEligiblePanel extends JPanel {
                 "Montepremi",
                 "Id_Circolo");
 
-        this.table = new JTable(
-            queryManager.listTorneiToMatrix(
-                queryManager.findAllEligibleByPlayer(
-                    queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()
-                ), this.columns.size()),
-        this.columns.toArray());
+        if (couple.isPresent()) {
+            frame.startFrame(this);
+            this.table = new JTable(
+                queryManager.listTorneiToMatrix(
+                    queryManager.findAllDoppiEligibleByCoppia(
+                        queryManager.findGiocatoriOfCoppia(queryManager.findCoppia(couple.get()).get())
+                    ), this.columns.size()),
+                this.columns.toArray());
+        } else {
+            this.table = new JTable(
+                queryManager.listTorneiToMatrix(
+                    queryManager.findAllSingolariEligibleByPlayer(
+                        queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()
+                    ), this.columns.size()),
+                this.columns.toArray());
+        }
 
         this.table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         JScrollPane scrollPane = new JScrollPane(this.table);

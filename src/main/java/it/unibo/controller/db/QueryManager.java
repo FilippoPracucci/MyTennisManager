@@ -264,7 +264,9 @@ public class QueryManager {
             matrix[i][j++] = vt.getLimCategoria().orElse(null);
             matrix[i][j++] = vt.getLimEta().orElse(null);
             matrix[i][j++] = vt.getMontepremi().orElse(null);
-            matrix[i][j++] = vt.getIdCircolo();
+            if (col == 9) {
+                matrix[i][j++] = vt.getIdCircolo();
+            }
             j = 0;
         }
 
@@ -289,8 +291,12 @@ public class QueryManager {
         return this.viewTornei.findAllEdizioniByCircolo(circolo);
     }
 
-    public List<TorneiWithEditions> findAllEligibleByPlayer(final Giocatore giocatore) {
-        return this.viewTornei.findAllEligibleByPlayer(giocatore);
+    public List<TorneiWithEditions> findAllSingolariEligibleByPlayer(final Giocatore giocatore) {
+        return this.viewTornei.findAllSingolariEligibleByPlayer(giocatore);
+    }
+
+    public List<TorneiWithEditions> findAllDoppiEligibleByCoppia(final Pair<Giocatore, Giocatore> coppia) {
+        return this.viewTornei.findAllDoppiEligibleByCoppia(coppia);
     }
 
     public List<TorneiWithEditions> findAllFiltered(final Giocatore giocatore,
@@ -306,7 +312,7 @@ public class QueryManager {
 
     public int addCoppia(final Coppia coppia) {
         this.coppia.save(coppia);
-        return coppia.getId();
+        return this.coppia.getLastId();
     }
 
     public Optional<Coppia> findCoppia(final Integer id) {
@@ -322,7 +328,10 @@ public class QueryManager {
     }
 
     public List<Integer> findAllEligibleUnioni(final Giocatore giocatore) {
-        return this.unione.findAllEligible(giocatore.getSesso());
+        return this.viewUnioni.findAllEligibleUnioni(giocatore.getId(), giocatore.getSesso())
+            .stream()
+            .map(u -> u.getIdCoppia())
+            .toList();
     }
 
     public List<Integer> findAllPlayerCouples(final Giocatore giocatore) {

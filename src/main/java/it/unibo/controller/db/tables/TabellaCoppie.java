@@ -93,9 +93,8 @@ public class TabellaCoppie implements Table<Coppia, Integer> {
 
     @Override
     public boolean save(final Coppia coppia) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(Id_Coppia) VALUES (?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "() VALUES ()";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setInt(1, coppia.getId());
             statement.executeUpdate();
             return true;
         } catch (final SQLIntegrityConstraintViolationException e) {
@@ -119,6 +118,20 @@ public class TabellaCoppie implements Table<Coppia, Integer> {
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public Integer getLastId() {
+        final String query = "SELECT MAX(Id_Coppia) AS Id_Coppia FROM " + TABLE_NAME + " ORDER BY Id_Coppia DESC";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            final ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("Id_Coppia");
+            } else {
+                return 0;
+            }
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }

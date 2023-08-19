@@ -62,9 +62,9 @@ public class App {
         this.tabellaCoppie.dropTable();
         this.tabellaCoppie.createTable();
         this.tabellaUnioni.dropTable();
-        this.tabellaUnioni.createTable();*/
+        this.tabellaUnioni.createTable();
         this.viewUnioni.dropView();
-        this.viewUnioni.createView();
+        this.viewUnioni.createView();*/
     }
 
     public void setup() {

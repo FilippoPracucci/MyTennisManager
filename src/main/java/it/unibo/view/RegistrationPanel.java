@@ -153,7 +153,11 @@ public class RegistrationPanel extends JPanel {
                     options,
                     options[1]);
             if (result == 0) {
-                frame.closeFrame();
+                if (couple.isPresent()) {
+                    frame.changePanel(new MenuCoppia(frame, dim, queryManager, credentials));
+                } else {
+                    frame.closeFrame();
+                }
             }
         });
     }
@@ -175,7 +179,7 @@ public class RegistrationPanel extends JPanel {
         if (isPlayer) {
             qM.findAllTorneoSingolareEligible(qM.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()).forEach(t -> box.addItem(t.getId()));
         } else {
-            qM.findAllTorneoDoppioEligible(qM.findGiocatoriOfCoppia(qM.findCoppia(couple.get()).get()));
+            qM.findAllTorneoDoppioEligible(qM.findGiocatoriOfCoppia(qM.findCoppia(couple.get()).get())).forEach(t -> box.addItem(t.getId()));
         }
     }
 
