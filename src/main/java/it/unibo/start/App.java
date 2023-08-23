@@ -10,6 +10,9 @@ import it.unibo.controller.db.tables.TabellaIscrizioni;
 import it.unibo.controller.db.tables.TabellaOrganizzatori;
 import it.unibo.controller.db.tables.TabellaTornei;
 import it.unibo.controller.db.tables.TabellaUnioni;
+import it.unibo.controller.db.views.ViewIscrittiDoppi;
+import it.unibo.controller.db.views.ViewIscrittiSingoli;
+import it.unibo.controller.db.views.ViewIscrizioniGiocatore;
 import it.unibo.controller.db.views.ViewTornei;
 import it.unibo.controller.db.views.ViewUnioni;
 import it.unibo.view.MainFrame;
@@ -31,6 +34,9 @@ public class App {
     private final TabellaUnioni tabellaUnioni;
     private final ViewTornei viewTornei;
     private final ViewUnioni viewUnioni;
+    private final ViewIscrittiSingoli viewIscrittiSingoli;
+    private final ViewIscrittiDoppi viewIscrittiDoppi;
+    private final ViewIscrizioniGiocatore viewIscrizioniGiocatore;
     private QueryManager queryManager;
 
     private MainFrame frame;
@@ -47,24 +53,37 @@ public class App {
         this.tabellaUnioni = new TabellaUnioni(this.connectionProvider.getMySQLConnection());
         this.viewTornei = new ViewTornei(this.connectionProvider.getMySQLConnection());
         this.viewUnioni = new ViewUnioni(this.connectionProvider.getMySQLConnection());
+        this.viewIscrittiSingoli = new ViewIscrittiSingoli(this.connectionProvider.getMySQLConnection());
+        this.viewIscrittiDoppi = new ViewIscrittiDoppi(this.connectionProvider.getMySQLConnection());
+        this.viewIscrizioniGiocatore = new ViewIscrizioniGiocatore(this.connectionProvider.getMySQLConnection());
         this.queryManager = new QueryManager(this.connectionProvider);
         this.frame = new MainFrame(this.queryManager);
         
-        /*this.tabellaTornei.dropTable();
-        this.tabellaTornei.createTable();
+        /*this.tabellaCircoli.dropTable();
+        this.tabellaCircoli.createTable();
         this.tabellaEdizioniTorneo.dropTable();
         this.tabellaEdizioniTorneo.createTable();
-
+        this.tabellaGiocatori.dropTable();
+        this.tabellaGiocatori.createTable();
         this.tabellaIscrizioni.dropTable();
         this.tabellaIscrizioni.createTable();
-        this.viewTornei.dropView();
-        this.viewTornei.createView();
+        this.tabellaOrganizzatori.dropTable();
+        this.tabellaOrganizzatori.createTable();
+        this.tabellaTornei.dropTable();
+        this.tabellaTornei.createTable();
         this.tabellaCoppie.dropTable();
         this.tabellaCoppie.createTable();
         this.tabellaUnioni.dropTable();
         this.tabellaUnioni.createTable();
+        this.viewTornei.dropView();
+        this.viewTornei.createView();
         this.viewUnioni.dropView();
-        this.viewUnioni.createView();*/
+        this.viewUnioni.createView();
+        this.viewIscrittiSingoli.dropView();
+        this.viewIscrittiSingoli.createView();
+        this.viewIscrizioniGiocatore.dropView();
+        this.viewIscrizioniGiocatore.createView();*/
+        this.viewIscrittiDoppi.createView();
     }
 
     public void setup() {
@@ -84,6 +103,14 @@ public class App {
         this.tabellaCoppie.createTable();
         this.tabellaUnioni.dropTable();
         this.tabellaUnioni.createTable();
+        this.viewTornei.dropView();
+        this.viewTornei.createView();
+        this.viewUnioni.dropView();
+        this.viewUnioni.createView();
+        this.viewIscrittiSingoli.dropView();
+        this.viewIscrittiSingoli.createView();
+        this.viewIscrizioniGiocatore.dropView();
+        this.viewIscrizioniGiocatore.createView();
     }
 
     public static void main(String[] args) {

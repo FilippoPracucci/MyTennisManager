@@ -11,23 +11,22 @@ import java.util.Objects;
 import java.util.Optional;
 
 import it.unibo.controller.db.View;
-import it.unibo.model.CompagnoUnioni;
-import it.unibo.utils.Pair;
+import it.unibo.model.GiocatoriIscritti;
+import it.unibo.utils.Tern;
 
-public class ViewUnioni implements View<CompagnoUnioni, Pair<Integer, Integer>> {
+public class ViewIscrittiSingoli implements View<GiocatoriIscritti, Tern<Integer, Integer, Integer>> {
 
-    public static final String VIEW_NAME = "COMPAGNO_UNIONI";
+    public static final String VIEW_NAME = "GIOCATORI_ISCRITTI";
 
     private final Connection connection; 
 
-    public ViewUnioni(final Connection connection) {
+    public ViewIscrittiSingoli(final Connection connection) {
         this.connection = Objects.requireNonNull(connection);
     }
 
     public Connection getConnection() {
         return this.connection;
     }
-
 
     @Override
     public String getViewName() {
@@ -39,9 +38,10 @@ public class ViewUnioni implements View<CompagnoUnioni, Pair<Integer, Integer>> 
         try (final Statement statement = this.connection.createStatement()) {
             statement.executeUpdate(
                 "CREATE VIEW " + VIEW_NAME + " AS (" +
-                "SELECT u.Id_Coppia, g.Id_Utente, g.Nome, g.Cognome, g.Classifica, g.Sesso " +
-                "FROM UNIONI u " + "JOIN GIOCATORI g " +
-                "ON (u.Id_Giocatore = g.Id_Utente))");
+                "SELECT g.Id_Utente, g.Nome, g.Cognome, g.Email, g.Tessera, g.Classifica, g.Eta, g.Telefono, i.Id_Torneo, i.Numero_Edizione, i.Preferenza_Orario " +
+                "FROM GIOCATORI g " +
+                "JOIN ISCRIZIONI i " +
+                "ON (g.Id_Utente = i.Id_Utente))");
             return true;
         } catch (final SQLException e) {
             return false;
@@ -59,85 +59,93 @@ public class ViewUnioni implements View<CompagnoUnioni, Pair<Integer, Integer>> 
     }
 
     @Override
-    public Optional<CompagnoUnioni> findByPrimaryKey(final Pair<Integer, Integer> key) {
-        final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Coppia = ? AND Id_Giocatore = ?";
+    public Optional<GiocatoriIscritti> findByPrimaryKey(final Tern<Integer, Integer, Integer> key) {
+        final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Utente = ? AND Id_Torneo = ? AND Numero_Edizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, key.getX());
             statement.setInt(2, key.getY());
+            statement.setInt(3, key.getZ());
             final ResultSet resultSet = statement.executeQuery();
-            return readCompagnoUnioniFromResultSet(resultSet).stream().findFirst();
+            return readGiocatoriIscrittiFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public List<CompagnoUnioni> findAll() {
+    public List<GiocatoriIscritti> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + VIEW_NAME);
-            return readCompagnoUnioniFromResultSet(resultSet);
+            return readGiocatoriIscrittiFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public List<CompagnoUnioni> findAllMyUnioni(final Integer id) {
-        final String query = "SELECT * FROM " + VIEW_NAME +
-            " WHERE Id_Coppia IN (" +
-                "SELECT Id_Coppia FROM " + VIEW_NAME +
-                " WHERE Id_Utente = ?) " +
-            "AND Id_Utente != ?";
+    public List<GiocatoriIscritti> findAllIscrittiByEdizioneTorneo(final Integer idTorneo, final Integer nEdizione) {
+        final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Torneo = ? AND Numero_Edizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setInt(1, id);
-            statement.setInt(2, id);
+            statement.setInt(1, idTorneo);
+            statement.setInt(2, nEdizione);
             final ResultSet resultSet = statement.executeQuery();
-            return readCompagnoUnioniFromResultSet(resultSet);
+            return readGiocatoriIscrittiFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public List<CompagnoUnioni> findAllEligibleUnioni(final Integer id, final String sesso) {
-        final String query = "SELECT * FROM " + VIEW_NAME +
-            " WHERE Id_Coppia IN (" +
-                "SELECT Id_Coppia FROM " + VIEW_NAME +
-                " WHERE Sesso = ? " +
-                "GROUP BY Id_Coppia " +
-                "HAVING COUNT(*) = 1" +
-                ") " +
-            "AND Id_Utente != ? AND Id_Utente NOT IN (" +
-                "SELECT Id_Utente FROM " + VIEW_NAME + " WHERE Id_Coppia IN (" +
-                    "SELECT Id_Coppia FROM " + VIEW_NAME + " WHERE Id_Utente = ?))";
+    public List<GiocatoriIscritti> findAllIscrittiByPreferenzaOrario(final String timePreference) {
+        final String query;
+        if (timePreference == "Nessuna") {
+            query = "SELECT * FROM " + VIEW_NAME;
+        } else {
+            query = "SELECT * FROM " + VIEW_NAME + " WHERE Preferenza_Orario IS NULL OR Preferenza_Orario = ?";
+        }
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, sesso);
-            statement.setInt(2, id);
-            statement.setInt(3, id);
+            if (timePreference != "Nessuna") {
+                statement.setString(1, timePreference);
+            }
             final ResultSet resultSet = statement.executeQuery();
-            return readCompagnoUnioniFromResultSet(resultSet);
+            return readGiocatoriIscrittiFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private List<CompagnoUnioni> readCompagnoUnioniFromResultSet(final ResultSet resultSet) {
-        final List<CompagnoUnioni> unioni = new ArrayList<>();
+    private List<GiocatoriIscritti> readGiocatoriIscrittiFromResultSet(final ResultSet resultSet) {
+        final List<GiocatoriIscritti> iscritti = new ArrayList<>();
         try {
             // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
             // before the first row. With next the pointer advances to the following row and returns 
             // true if it has not advanced past the last row
             while (resultSet.next()) {
                 // To get the values of the columns of the row currently pointed we use the get methods 
-                final Integer idCoppia = resultSet.getInt("Id_Coppia");
                 final Integer idUtente = resultSet.getInt("Id_Utente");
                 final String nome = resultSet.getString("Nome");
                 final String cognome = resultSet.getString("Cognome");
+                final String email = resultSet.getString("Email");
+                final String tessera = resultSet.getString("Tessera");
                 final String classifica = resultSet.getString("Classifica");
-                final String sesso = resultSet.getString("Sesso");
+                final int eta = resultSet.getInt("Eta");
+                final String telefono = resultSet.getString("Telefono");
+                final Integer idTorneo = resultSet.getInt("Id_Torneo");
+                final Integer nEdizione = resultSet.getInt("Numero_Edizione");
+                final String prefOrario = resultSet.getString("Preferenza_Orario");
                 // After retrieving all the data we create a Student object
-                final CompagnoUnioni unione = new CompagnoUnioni(idCoppia, idUtente, nome, cognome, classifica, sesso);
-                unioni.add(unione);
+                final GiocatoriIscritti iscritto = new GiocatoriIscritti(idUtente,
+                        nome,
+                        cognome,
+                        email,
+                        tessera,
+                        classifica,
+                        eta,
+                        telefono,
+                        idTorneo,
+                        nEdizione,
+                        prefOrario);
+                iscritti.add(iscritto);
             }
         } catch (final SQLException e) {}
-        return unioni;
+        return iscritti;
     }
 }

@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import it.unibo.controller.db.Table;
 import it.unibo.model.Iscrizione;
+import it.unibo.utils.Pair;
 
 public class TabellaIscrizioni implements Table<Iscrizione, Integer> {
 
@@ -68,28 +69,6 @@ public class TabellaIscrizioni implements Table<Iscrizione, Integer> {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private List<Iscrizione> readIscrizioniFromResultSet(final ResultSet resultSet) {
-        final List<Iscrizione> iscrizioni = new ArrayList<>();
-        try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
-            while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
-                final int id = resultSet.getInt("Id_Iscrizione");
-                final Optional<String> pref_orario = Optional.ofNullable(resultSet.getString("Preferenza_Orario"));
-                final int torneo = resultSet.getInt("Id_Torneo");
-                final int num_edizione = resultSet.getInt("Numero_Edizione");
-                final Optional<Integer> utente = Optional.ofNullable(resultSet.getInt("Id_Utente"));
-                final Optional<Integer> coppia = Optional.ofNullable(resultSet.getInt("Id_Coppia"));
-                // After retrieving all the data we create a Student object
-                final Iscrizione iscrizione = new Iscrizione(id, pref_orario, torneo, num_edizione, utente, coppia);
-                iscrizioni.add(iscrizione);
-            }
-        } catch (final SQLException e) {}
-        return iscrizioni;
     }
 
     @Override
@@ -165,5 +144,53 @@ public class TabellaIscrizioni implements Table<Iscrizione, Integer> {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public Optional<Iscrizione> findByEdizioneToGiocatore(final Pair<Integer, Integer> edizione, final Integer id) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Torneo = ? AND Numero_Edizione = ? AND Id_Utente = ?";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, edizione.getX());
+            statement.setInt(2, edizione.getY());
+            statement.setInt(3, id);
+            final ResultSet resultSet = statement.executeQuery();
+            return readIscrizioniFromResultSet(resultSet).stream().findFirst();
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public Optional<Iscrizione> findByEdizioneToCoppia(final Pair<Integer, Integer> edizione, final Integer id) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Torneo = ? AND Numero_Edizione = ? AND Id_Coppia = ?";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, edizione.getX());
+            statement.setInt(2, edizione.getY());
+            statement.setInt(3, id);
+            final ResultSet resultSet = statement.executeQuery();
+            return readIscrizioniFromResultSet(resultSet).stream().findFirst();
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private List<Iscrizione> readIscrizioniFromResultSet(final ResultSet resultSet) {
+        final List<Iscrizione> iscrizioni = new ArrayList<>();
+        try {
+            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
+            // before the first row. With next the pointer advances to the following row and returns 
+            // true if it has not advanced past the last row
+            while (resultSet.next()) {
+                // To get the values of the columns of the row currently pointed we use the get methods 
+                final int id = resultSet.getInt("Id_Iscrizione");
+                final Optional<String> pref_orario = Optional.ofNullable(resultSet.getString("Preferenza_Orario"));
+                final int torneo = resultSet.getInt("Id_Torneo");
+                final int num_edizione = resultSet.getInt("Numero_Edizione");
+                final Optional<Integer> utente = Optional.ofNullable(resultSet.getInt("Id_Utente"));
+                final Optional<Integer> coppia = Optional.ofNullable(resultSet.getInt("Id_Coppia"));
+                // After retrieving all the data we create a Student object
+                final Iscrizione iscrizione = new Iscrizione(id, pref_orario, torneo, num_edizione, utente, coppia);
+                iscrizioni.add(iscrizione);
+            }
+        } catch (final SQLException e) {}
+        return iscrizioni;
     }
 }

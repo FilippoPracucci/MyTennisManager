@@ -120,14 +120,18 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
                 break;
         }
         final String query =
-            "SELECT * FROM " + VIEW_NAME +
-            " WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
+            "SELECT et.* FROM " + VIEW_NAME + " et LEFT JOIN ISCRIZIONI i " +
+            "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione) " +
+            "WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
             "AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) " +
-            "AND Tipo = ?";
+            "AND Tipo = ? " +
+            "AND ? not in (" +
+                "SELECT Id_Utente FROM ISCRIZIONI WHERE Id_Torneo = i.Id_Torneo AND Numero_Edizione = i.Numero_Edizione)";
         try (final PreparedStatement statement = this.getConnection().prepareStatement(query)) {
             statement.setInt(1, giocatore.getEta());
             statement.setInt(2, cat);
             statement.setString(3, t);
+            statement.setInt(4, giocatore.getId());
             final ResultSet resultSet = statement.executeQuery();
             return this.readTorneiWithEditionsFromResultSet(resultSet);
         } catch (final SQLException e) {
@@ -135,7 +139,7 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
         }
     }
 
-    public List<TorneiWithEditions> findAllDoppiEligibleByCoppia (final Pair<Giocatore, Giocatore> coppia) {
+    public List<TorneiWithEditions> findAllDoppiEligibleByCoppia (final Pair<Giocatore, Giocatore> coppia, final Integer id) {
         final char first1 = coppia.getX().getClassifica().charAt(0);
         final char first2 = coppia.getY().getClassifica().charAt(0);
         final int cat;
@@ -171,11 +175,22 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
             }
         }
         final String query =
-            "SELECT * FROM " + VIEW_NAME +
-            " WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
+            /*"SELECT et.*, i.Id_Coppia FROM " + VIEW_NAME + " et JOIN ISCRIZIONI i " +
+            "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione) " +
+            "WHERE i.Id_Utente NOT IN (" +
+                "SELECT cu.Id_Utente FROM COMPAGNO_UNIONI cu " +
+                "WHERE cu.Id_Coppia = ?) " +
+            "AND (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
+            "AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) " +
+            "AND Tipo = ?";*/
+            "SELECT et.* FROM " + VIEW_NAME + " et LEFT JOIN ISCRIZIONI i " +
+            "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione) " +
+            "WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
             "AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) " +
             "AND Tipo = ?";
         try (final PreparedStatement statement = this.getConnection().prepareStatement(query)) {
+            
+            //statement.setInt(1, id);
             statement.setInt(1, (coppia.getX().getEta() < coppia.getY().getEta()) ? coppia.getY().getEta() : coppia.getX().getEta());
             statement.setInt(2, cat);
             statement.setString(3, t);

@@ -3,19 +3,19 @@ package it.unibo.view;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import it.unibo.controller.db.QueryManager;
 import it.unibo.utils.Pair;
@@ -31,25 +31,22 @@ public class MenuCoppia extends JPanel {
     private static final String CHANGE_VIEW = "Cambia visione";
     private static final String MY_COUPLES = "LE TUE COPPIE";
     private static final String ELIGIBLE_COUPLES = "COPPIE ESISTENTI IDONEE";
-    private static final String ID_COUPLE_REGISTRATION = "Id_Coppia iscrizione:";
-    private static final String ID_COUPLE_UNION = "Id_Coppia unione:";
+    private static final String ALL_OUR_REGISTRATIONS = "Visualizza lista iscrizioni";
 
     private final List<String> columns;
     private boolean isMineUnions;
 
     private final JPanel buttonPanel;
     private JTable table;
-    private TableModel model;
+    private DefaultTableModel model;
     private JScrollPane scrollPane;
     private final JButton newCoupleButton;
     private final JButton registrationButton;
     private final JButton unionButton;
     private final JButton changeView;
-    private final JComboBox<Integer> myCoupleBox;
-    private final JComboBox<Integer> coupleBox;
+    private final JButton allRegistration;
     private final JLabel info;
-    private final JLabel idCoppiaIscrizione;
-    private final JLabel idCoppiaUnione;
+    Integer idCoppia;
 
     public MenuCoppia(final SecondaryFrame frame,
             final Dimension dim,
@@ -60,25 +57,22 @@ public class MenuCoppia extends JPanel {
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
 
-        this.columns = List.of("Id_Coppia", "Id_Compagno", "Nome_Compagno", "Cognome_Compagno", "Classifica_Compagno", "Sesso_Compagno");
+        this.columns = List.of("Id_Coppia",
+            "Id_Compagno",
+            "Nome_Compagno",
+            "Cognome_Compagno",
+            "Classifica_Compagno",
+            "Sesso_Compagno");
 
         this.newCoupleButton = new JButton(NEW_COUPLE);
         this.registrationButton = new JButton(REGISTRATION);
+        this.registrationButton.setEnabled(false);
         this.unionButton = new JButton(UNION);
+        this.unionButton.setEnabled(false);
         this.changeView = new JButton(CHANGE_VIEW);
-        this.myCoupleBox = new JComboBox<>();
         this.info = new JLabel(MY_COUPLES);
-        this.idCoppiaIscrizione = new JLabel(ID_COUPLE_REGISTRATION);
-        this.idCoppiaUnione = new JLabel(ID_COUPLE_UNION);
-        this.createList(
-            queryManager.findAllPlayerCouples(
-                queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()
-            ), this.myCoupleBox);
-        this.coupleBox = new JComboBox<>();
-        this.createList(
-            queryManager.findAllEligibleUnioni(
-                queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()
-            ), this.coupleBox);
+        this.allRegistration = new JButton(ALL_OUR_REGISTRATIONS);
+        this.allRegistration.setEnabled(false);
 
         this.buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 
@@ -95,6 +89,32 @@ public class MenuCoppia extends JPanel {
         this.scrollPane.setPreferredSize(new Dimension(
             Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
             Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
+
+        this.table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        this.table.setDragEnabled(false);
+        this.table.getTableHeader().setReorderingAllowed(false);
+
+        this.table.setRowSelectionAllowed(true);
+        ListSelectionModel listSelectionModel = this.table.getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listSelectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(final ListSelectionEvent e) {
+                final int row = table.getSelectedRow();
+                if (isMineUnions) {
+                    registrationButton.setEnabled(true);
+                    unionButton.setEnabled(false);
+                    allRegistration.setEnabled(true);
+                } else {
+                    registrationButton.setEnabled(false);
+                    unionButton.setEnabled(true);
+                    allRegistration.setEnabled(false);
+                }
+                if (!e.getValueIsAdjusting() && row >= 0) {
+                    idCoppia = (Integer) table.getModel().getValueAt(row, 0);
+                }
+            }
+        });
 
         this.newCoupleButton.addActionListener(e -> {
             final Integer id = queryManager.addCoppia(queryManager.createCoppia(null));
@@ -114,40 +134,30 @@ public class MenuCoppia extends JPanel {
         });
 
         this.registrationButton.addActionListener(e -> {
-            frame.changePanel(new RegistrationPanel(frame,
-                dim,
-                queryManager,
-                credentials,
-                false,
-                Optional.of((Integer) this.myCoupleBox.getSelectedItem())));
             new TournamentsEligiblePanel(new SecondaryFrame(),
                 dim,
                 queryManager,
                 credentials,
-                Optional.of((Integer) this.myCoupleBox.getSelectedItem()));
+                false,
+                Optional.of(idCoppia));
         });
 
         this.unionButton.addActionListener(e -> {
             queryManager.addUnione(queryManager.createUnione(
-                (Integer) this.coupleBox.getSelectedItem(),
+                idCoppia,
                 queryManager.getIdGiocatore(
                     queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()
-                )
-            ));
+                )));
             JOptionPane.showMessageDialog(this, "Unione effettuata con successo!");
             this.model = new DefaultTableModel(queryManager.listUnioniToMatrix(
                 queryManager.findAllUnioniByGiocatore(
                     queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()
                 ), this.columns.size()),
-            this.columns.toArray());
+                this.columns.toArray());
             this.table.setModel(this.model);
             this.isMineUnions = true;
             this.info.setText(MY_COUPLES);
-            this.myCoupleBox.removeAllItems();
-            this.createList(
-                queryManager.findAllPlayerCouples(
-                    queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get()
-                ), this.myCoupleBox);
+            this.unionButton.setEnabled(false);
         });
 
         this.changeView.addActionListener(e -> {
@@ -170,24 +180,20 @@ public class MenuCoppia extends JPanel {
                 this.isMineUnions = true;
                 this.info.setText(MY_COUPLES);
             }
+            
         });
 
-        this.table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        this.allRegistration.addActionListener(e -> {
+            new AllIscrizioni(new SecondaryFrame(), dim, queryManager, credentials, Optional.of(idCoppia));
+        });
+
         this.buttonPanel.add(this.newCoupleButton);
-        this.buttonPanel.add(this.idCoppiaIscrizione);
-        this.buttonPanel.add(this.myCoupleBox);
         this.buttonPanel.add(this.registrationButton);
-        this.buttonPanel.add(this.idCoppiaUnione);
-        this.buttonPanel.add(this.coupleBox);
         this.buttonPanel.add(this.unionButton);
         this.buttonPanel.add(this.changeView);
         this.buttonPanel.add(this.info);
+        this.buttonPanel.add(this.allRegistration);
         this.add(this.buttonPanel, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
-    }
-
-    private void createList(final List<Integer> list, final JComboBox<Integer> box) {
-        box.addItem(Types.NULL);
-        list.forEach(i -> box.addItem(i));
     }
 }

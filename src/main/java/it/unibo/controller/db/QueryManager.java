@@ -14,14 +14,20 @@ import it.unibo.controller.db.tables.TabellaIscrizioni;
 import it.unibo.controller.db.tables.TabellaOrganizzatori;
 import it.unibo.controller.db.tables.TabellaTornei;
 import it.unibo.controller.db.tables.TabellaUnioni;
+import it.unibo.controller.db.views.ViewIscrittiDoppi;
+import it.unibo.controller.db.views.ViewIscrittiSingoli;
+import it.unibo.controller.db.views.ViewIscrizioniGiocatore;
 import it.unibo.controller.db.views.ViewTornei;
 import it.unibo.controller.db.views.ViewUnioni;
 import it.unibo.model.Circolo;
 import it.unibo.model.CompagnoUnioni;
 import it.unibo.model.Coppia;
+import it.unibo.model.CoppieIscritte;
 import it.unibo.model.EdizioneTorneo;
 import it.unibo.model.Giocatore;
+import it.unibo.model.GiocatoriIscritti;
 import it.unibo.model.Iscrizione;
+import it.unibo.model.IscrizioniWithTorneo;
 import it.unibo.model.Organizzatore;
 import it.unibo.model.Torneo;
 import it.unibo.model.Unione;
@@ -41,6 +47,9 @@ public class QueryManager {
     private final TabellaUnioni unione;
     private final ViewTornei viewTornei;
     private final ViewUnioni viewUnioni;
+    private final ViewIscrittiSingoli viewIscrittiSingoli;
+    private final ViewIscrittiDoppi viewIscrittiDoppi;
+    private final ViewIscrizioniGiocatore viewIscrizioniGiocatore;
 
     public QueryManager(final ConnectionProvider connectionProvider) {
         this.circolo = new TabellaCircoli(connectionProvider.getMySQLConnection());
@@ -53,6 +62,9 @@ public class QueryManager {
         this.unione = new TabellaUnioni(connectionProvider.getMySQLConnection());
         this.viewTornei = new ViewTornei(connectionProvider.getMySQLConnection());
         this.viewUnioni = new ViewUnioni(connectionProvider.getMySQLConnection());
+        this.viewIscrittiSingoli = new ViewIscrittiSingoli(connectionProvider.getMySQLConnection());
+        this.viewIscrittiDoppi = new ViewIscrittiDoppi(connectionProvider.getMySQLConnection());
+        this.viewIscrizioniGiocatore = new ViewIscrizioniGiocatore(connectionProvider.getMySQLConnection());
     }
 
     public Organizzatore createOrganizzatore(final String nome,
@@ -287,6 +299,67 @@ public class QueryManager {
         this.iscrizione.save(iscrizione);
     }
 
+    public List<GiocatoriIscritti> findAllGiocatoriIscrittiByEdizioneTorneo(final EdizioneTorneo edizioneTorneo) {
+        return this.viewIscrittiSingoli.findAllIscrittiByEdizioneTorneo(edizioneTorneo.getIdTorneo(), edizioneTorneo.getNumeroEdizione());
+    }
+
+    public List<GiocatoriIscritti> findAllIscrittiByPreferenzaOrario(final String prefOrario) {
+        return this.viewIscrittiSingoli.findAllIscrittiByPreferenzaOrario(prefOrario);
+    }
+
+    public Object[][] listGiocatoriIscrittiToMatrix(final List<GiocatoriIscritti> list, final int col) {
+        Object[][] matrix = new Object[list.size()][col];
+        GiocatoriIscritti gI;
+        int j = 0;
+
+        for (int i = 0; i < list.size(); i++) {
+            gI = list.get(i);
+            matrix[i][j++] = gI.getIdUtente();
+            matrix[i][j++] = gI.getNome();
+            matrix[i][j++] = gI.getCognome();
+            matrix[i][j++] = gI.getEmail();
+            matrix[i][j++] = gI.getTessera();
+            matrix[i][j++] = gI.getClassifica();
+            matrix[i][j++] = gI.getEta();
+            matrix[i][j++] = gI.getTelefono();
+            matrix[i][j++] = gI.getPrefOrario();
+            j = 0;
+        }
+
+        return matrix;
+    }
+
+    public List<CoppieIscritte> findAllCoppieIscritteByEdizioneTorneo(final EdizioneTorneo edizioneTorneo) {
+        return this.viewIscrittiDoppi.findAllIscrittiByEdizioneTorneo(edizioneTorneo.getIdTorneo(), edizioneTorneo.getNumeroEdizione());
+    }
+
+    public List<CoppieIscritte> findAllCoppieIscritteByPreferenzaOrario(final String prefOrario) {
+        return this.viewIscrittiDoppi.findAllIscrittiByPreferenzaOrario(prefOrario);
+    }
+
+    public Object[][] listCoppieIscritteToMatrix(final List<CoppieIscritte> list, final int col) {
+        Object[][] matrix = new Object[list.size()][col];
+        CoppieIscritte cI;
+        int j = 0;
+
+        for (int i = 0; i < list.size(); i++) {
+            cI = list.get(i);
+            matrix[i][j++] = cI.getIdCoppia();
+            matrix[i][j++] = cI.getGiocatore1();
+            matrix[i][j++] = cI.getGiocatore2();
+            matrix[i][j++] = cI.getTessera1();
+            matrix[i][j++] = cI.getTessera2();
+            matrix[i][j++] = cI.getClassifica1();
+            matrix[i][j++] = cI.getClassifica2();
+            matrix[i][j++] = cI.getTelefono1();
+            matrix[i][j++] = cI.getTelefono2();
+            matrix[i][j++] = cI.getPrefOrario();
+            j = 0;
+        }
+
+        return matrix;
+    }
+
     public List<TorneiWithEditions> findAllEdizioniByCircolo(final Circolo circolo) {
         return this.viewTornei.findAllEdizioniByCircolo(circolo);
     }
@@ -295,8 +368,8 @@ public class QueryManager {
         return this.viewTornei.findAllSingolariEligibleByPlayer(giocatore);
     }
 
-    public List<TorneiWithEditions> findAllDoppiEligibleByCoppia(final Pair<Giocatore, Giocatore> coppia) {
-        return this.viewTornei.findAllDoppiEligibleByCoppia(coppia);
+    public List<TorneiWithEditions> findAllDoppiEligibleByCoppia(final Pair<Giocatore, Giocatore> coppia, final Integer id) {
+        return this.viewTornei.findAllDoppiEligibleByCoppia(coppia, id);
     }
 
     public List<TorneiWithEditions> findAllFiltered(final Giocatore giocatore,
@@ -368,5 +441,45 @@ public class QueryManager {
         }
 
         return matrix;
+    }
+
+    public List<IscrizioniWithTorneo> findAllIscrizioniByGiocatore(final Giocatore giocatore) {
+        return this.viewIscrizioniGiocatore.findByGiocatore(giocatore);
+    }
+
+    public List<IscrizioniWithTorneo> findAllIscrizioniByCoppia(final Coppia coppia) {
+        return this.viewIscrizioniGiocatore.findByCoppia(coppia.getId());
+    }
+
+    public Object[][] listIscrizioniToMatrix(final List<IscrizioniWithTorneo> list, final int col) {
+        Object[][] matrix = new Object[list.size()][col];
+        DateFormat df = new SimpleDateFormat("dd-MM-YYYY");
+        IscrizioniWithTorneo iT;
+        int j = 0;
+
+        for (int i = 0; i < list.size(); i++) {
+            iT = list.get(i);
+            matrix[i][j++] = iT.getIdTorneo();
+            matrix[i][j++] = iT.getNumEdizione();
+            matrix[i][j++] = iT.getTipo();
+            matrix[i][j++] = df.format(iT.getDataInizio());
+            matrix[i][j++] = df.format(iT.getDataFine());
+            matrix[i][j++] = iT.getNomeCircolo();
+            matrix[i][j++] = iT.getLimCategoria();
+            matrix[i][j++] = iT.getLimEta();
+            matrix[i][j++] = iT.getMontepremi();
+            matrix[i][j++] = iT.getPreferenzaOrario();
+            j = 0;
+        }
+
+        return matrix;
+    }
+
+    public void deleteIscrizioneByEdizione(final Pair<Integer, Integer> edizione, final Optional<Integer> idUtente, final Optional<Integer> idCoppia) {
+        if (idCoppia.isPresent()) {
+            this.viewIscrizioniGiocatore.deleteIscrizioneCoppiaByEdizione(edizione, idCoppia.get());
+        } else {
+            this.viewIscrizioniGiocatore.deleteIscrizioneGiocatoreByEdizione(edizione, idUtente.get());
+        }
     }
 }

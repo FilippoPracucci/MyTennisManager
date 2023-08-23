@@ -126,6 +126,8 @@ public class TournamentsFiltered extends JPanel {
         });
 
         this.table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        this.table.setDragEnabled(false);
+        this.table.getTableHeader().setReorderingAllowed(false);
 
         this.filterPanel.add(this.categoryLabel);
         this.filterPanel.add(this.categoryFilter);
