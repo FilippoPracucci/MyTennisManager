@@ -80,28 +80,6 @@ public class TabellaCircoli implements Table<Circolo, Integer> {
         }
     }
 
-    private List<Circolo> readCircoliFromResultSet(final ResultSet resultSet) {
-        final List<Circolo> circoli = new ArrayList<>();
-        try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
-            while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
-                final int id = resultSet.getInt("Id_Circolo");
-                final int organizzatore = resultSet.getInt("Organizzatore");
-                final String nome = resultSet.getString("Nome");
-                final String citta = resultSet.getString("Citta");
-                final String indirizzo = resultSet.getString("Indirizzo");
-                final String telefono = resultSet.getString("Telefono");
-                // After retrieving all the data we create a Student object
-                final Circolo circolo = new Circolo(id, organizzatore, nome, citta, indirizzo, telefono);
-                circoli.add(circolo);
-            }
-        } catch (final SQLException e) {}
-        return circoli;
-    }
-
     @Override
     public List<Circolo> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
@@ -163,5 +141,44 @@ public class TabellaCircoli implements Table<Circolo, Integer> {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public List<Circolo> findTopCircoli(final Integer sYear, final Integer eYear) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Circolo IN (" +
+            "SELECT * FROM (" +
+                "SELECT Id_Circolo FROM EDIZIONE_TORNEI " +
+                "WHERE YEAR (Data_Inizio) BETWEEN ? AND ? " +
+                "GROUP BY Id_Circolo ORDER BY COUNT(Id_Circolo) DESC " +
+                "LIMIT 3) AS topCircoli)";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, sYear);
+            statement.setInt(2, eYear);
+            final ResultSet resultSet = statement.executeQuery();
+            return readCircoliFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private List<Circolo> readCircoliFromResultSet(final ResultSet resultSet) {
+        final List<Circolo> circoli = new ArrayList<>();
+        try {
+            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
+            // before the first row. With next the pointer advances to the following row and returns 
+            // true if it has not advanced past the last row
+            while (resultSet.next()) {
+                // To get the values of the columns of the row currently pointed we use the get methods 
+                final int id = resultSet.getInt("Id_Circolo");
+                final int organizzatore = resultSet.getInt("Organizzatore");
+                final String nome = resultSet.getString("Nome");
+                final String citta = resultSet.getString("Citta");
+                final String indirizzo = resultSet.getString("Indirizzo");
+                final String telefono = resultSet.getString("Telefono");
+                // After retrieving all the data we create a Student object
+                final Circolo circolo = new Circolo(id, organizzatore, nome, citta, indirizzo, telefono);
+                circoli.add(circolo);
+            }
+        } catch (final SQLException e) {}
+        return circoli;
     }
 }

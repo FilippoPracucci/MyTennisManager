@@ -33,9 +33,9 @@ public class MenuOrganizzatore extends JPanel {
         this.pane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
         this.newTournament = new AddTorneoPanel(frame, dim, queryManager, credentials);
         this.newTournamentEdition = new AddEdizioneTorneoPanel(frame, dim, queryManager, credentials, Optional.empty());
-        this.allTournaments = new AllTournamentsPanel(frame, dim, queryManager, credentials);
-        this.deleteTournamentPanel = new DeleteTournamentPanel(frame, dim, queryManager, credentials);
-        this.deleteEditionPanel = new DeleteEditionPanel(frame, dim, queryManager, credentials);
+        this.allTournaments = new AllTorneiPanel(frame, dim, queryManager, credentials);
+        this.deleteTournamentPanel = new DeleteTorneoPanel(frame, dim, queryManager, credentials);
+        this.deleteEditionPanel = new DeleteEdizioneTorneoPanel(frame, dim, queryManager, credentials);
         
 
         this.setLayout(new FlowLayout(FlowLayout.CENTER));

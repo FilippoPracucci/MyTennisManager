@@ -32,8 +32,8 @@ public class MenuGiocatore extends JPanel {
             final Pair<String, String> credentials) {
 
         this.pane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-        this.tournamentsPanel = new TournamentsEligiblePanel(frame, dim, queryManager, credentials, true, Optional.empty());
-        this.tournamentsFilteredPanel = new TournamentsFiltered(frame, dim, queryManager, credentials);
+        this.tournamentsPanel = new TorneiEligiblePanel(frame, dim, queryManager, credentials, true, Optional.empty());
+        this.tournamentsFilteredPanel = new TorneiFiltered(frame, dim, queryManager, credentials);
         this.registrationsPanel = new AllIscrizioni(frame, dim, queryManager, credentials, Optional.empty());
         this.couplePanel = new MenuCoppia(frame, dim, queryManager, credentials);
 

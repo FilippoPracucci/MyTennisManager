@@ -134,7 +134,7 @@ public class MenuCoppia extends JPanel {
         });
 
         this.registrationButton.addActionListener(e -> {
-            new TournamentsEligiblePanel(new SecondaryFrame(),
+            new TorneiEligiblePanel(new SecondaryFrame(),
                 dim,
                 queryManager,
                 credentials,

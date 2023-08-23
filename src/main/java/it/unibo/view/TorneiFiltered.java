@@ -21,7 +21,7 @@ import javax.swing.table.TableModel;
 import it.unibo.controller.db.QueryManager;
 import it.unibo.utils.Pair;
 
-public class TournamentsFiltered extends JPanel {
+public class TorneiFiltered extends JPanel {
 
     private static final double WIDTH_PERC = 0.6;
     private static final double HEIGHT_PERC = 0.5;
@@ -45,7 +45,7 @@ public class TournamentsFiltered extends JPanel {
     private final JLabel yearLabel;
     private final JButton reset;
 
-    public TournamentsFiltered(final SecondaryFrame frame,
+    public TorneiFiltered(final SecondaryFrame frame,
             final Dimension dim,
             final QueryManager queryManager,
             final Pair<String, String> credentials) {

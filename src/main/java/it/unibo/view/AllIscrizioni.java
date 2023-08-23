@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -107,6 +108,7 @@ public class AllIscrizioni extends JPanel {
                     Optional.empty() :
                     Optional.of(queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get().getId()),
                 couple);
+            JOptionPane.showMessageDialog(this, "Iscrizione cancellata con successo!");
             if (!couple.isPresent()) {
                 this.model = new DefaultTableModel(queryManager.listIscrizioniToMatrix(
                             queryManager.findAllIscrizioniByGiocatore(

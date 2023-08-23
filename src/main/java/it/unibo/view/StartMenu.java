@@ -20,6 +20,7 @@ public class StartMenu extends JPanel {
     private static final String TITLE = "MyTennisManager";
     private static final String SIGN_IN = "ACCEDI";
     private static final String SIGN_UP = "ISCRIVITI";
+    private static final String STATISTICS = "STATISTICHE";
     private static final String INFO = "INFO";
 
     private final Dimension dimension;
@@ -30,6 +31,7 @@ public class StartMenu extends JPanel {
     public StartMenu(final MainFrame frame, final QueryManager queryManager) {
         final JButton signIn = new JButton(SIGN_IN);
         final JButton signUp = new JButton(SIGN_UP);
+        final JButton stats = new JButton(STATISTICS);
         final JButton info = new JButton(INFO);
         final JLabel label = new JLabel(TITLE);
         final BorderLayout layout = new BorderLayout(50, 150);
@@ -43,6 +45,7 @@ public class StartMenu extends JPanel {
 
         this.centerPanel.add(signIn);
         this.centerPanel.add(signUp);
+        this.centerPanel.add(stats);
         this.add(centerPanel, BorderLayout.CENTER);
 
         label.setFont(new Font("Arial", Font.BOLD, FONT_SIZE));
@@ -74,6 +77,8 @@ public class StartMenu extends JPanel {
                 frame.dispose();
             }
         });
+
+        stats.addActionListener(e -> new StatisticheMenu(new SecondaryFrame(), dimension, queryManager));
 
         info.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Registrare prima l'organizzatore e il corrispettivo circolo.\n" +

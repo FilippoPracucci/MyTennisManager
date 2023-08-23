@@ -86,33 +86,6 @@ public class TabellaGiocatori implements Table<Giocatore, Integer> {
         }
     }
 
-    private List<Giocatore> readGiocatoriFromResultSet(final ResultSet resultSet) {
-        final List<Giocatore> giocatori = new ArrayList<>();
-        try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
-            while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
-                final int id = resultSet.getInt("Id_Utente");
-                final String nome = resultSet.getString("Nome");
-                final String cognome = resultSet.getString("Cognome");
-                final String email = resultSet.getString("Email");
-                final String password = resultSet.getString("Password");
-                final String tessera = resultSet.getString("Tessera");
-                final String classifica = resultSet.getString("Classifica");
-                final int eta = resultSet.getInt("Eta");
-                final String sesso = resultSet.getString("Sesso");
-                final String telefono = resultSet.getString("Telefono");
-                final int id_circolo = resultSet.getInt("Id_Circolo");
-                // After retrieving all the data we create a Student object
-                final Giocatore giocatore = new Giocatore(id, nome, cognome, email, password, tessera, classifica, eta, sesso, telefono, id_circolo);
-                giocatori.add(giocatore);
-            }
-        } catch (final SQLException e) {}
-        return giocatori;
-    }
-
     @Override
     public List<Giocatore> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
@@ -192,4 +165,50 @@ public class TabellaGiocatori implements Table<Giocatore, Integer> {
         }
     }
 
+    public List<Giocatore> findTopGiocatori(final Integer sYear, final Integer eYear) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Utente IN (" +
+            "SELECT * FROM (" +
+                "SELECT u.Id_Giocatore FROM ISCRIZIONI i RIGHT JOIN UNIONI u " +
+                "ON (i.Id_Coppia = u.Id_Coppia) " +
+                "LEFT JOIN EDIZIONE_TORNEI et " +
+                "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione) " +
+                "WHERE YEAR (et.Data_Inizio) BETWEEN ? AND ? " +
+                "GROUP BY Id_Giocatore ORDER BY COUNT(Id_Giocatore) DESC " +
+                "LIMIT 5) AS topGiocatori)";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, sYear);
+            statement.setInt(2, eYear);
+            final ResultSet resultSet = statement.executeQuery();
+            return readGiocatoriFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private List<Giocatore> readGiocatoriFromResultSet(final ResultSet resultSet) {
+        final List<Giocatore> giocatori = new ArrayList<>();
+        try {
+            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
+            // before the first row. With next the pointer advances to the following row and returns 
+            // true if it has not advanced past the last row
+            while (resultSet.next()) {
+                // To get the values of the columns of the row currently pointed we use the get methods 
+                final int id = resultSet.getInt("Id_Utente");
+                final String nome = resultSet.getString("Nome");
+                final String cognome = resultSet.getString("Cognome");
+                final String email = resultSet.getString("Email");
+                final String password = resultSet.getString("Password");
+                final String tessera = resultSet.getString("Tessera");
+                final String classifica = resultSet.getString("Classifica");
+                final int eta = resultSet.getInt("Eta");
+                final String sesso = resultSet.getString("Sesso");
+                final String telefono = resultSet.getString("Telefono");
+                final int id_circolo = resultSet.getInt("Id_Circolo");
+                // After retrieving all the data we create a Student object
+                final Giocatore giocatore = new Giocatore(id, nome, cognome, email, password, tessera, classifica, eta, sesso, telefono, id_circolo);
+                giocatori.add(giocatore);
+            }
+        } catch (final SQLException e) {}
+        return giocatori;
+    }
 }

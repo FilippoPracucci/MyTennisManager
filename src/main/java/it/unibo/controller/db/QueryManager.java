@@ -121,6 +121,33 @@ public class QueryManager {
         return this.giocatore.findGiocatoreByCredentials(email, password);
     }
 
+    public List<Giocatore> findTopGiocatori(final Integer annoI, final Integer annoF) {
+        return this.giocatore.findTopGiocatori(annoI, annoF);
+    }
+
+    public Object[][] listGiocatoriToMatrix(final List<Giocatore> list, final int col) {
+        Object[][] matrix = new Object[list.size()][col];
+        Giocatore g;
+        int j = 0;
+
+        for (int i = 0; i < list.size(); i++) {
+            g = list.get(i);
+            matrix[i][j++] = g.getId();
+            matrix[i][j++] = g.getNome();
+            matrix[i][j++] = g.getCognome();
+            matrix[i][j++] = g.getEmail();
+            matrix[i][j++] = g.getTessera();
+            matrix[i][j++] = g.getClassifica();
+            matrix[i][j++] = g.getEta();
+            matrix[i][j++] = g.getSesso();
+            matrix[i][j++] = g.getTelefono();
+            matrix[i][j++] = g.getIdCircolo();
+            j = 0;
+        }
+
+        return matrix;
+    }
+
     public Circolo createCircolo(
         final Integer organizzatore,
         final String nome,
@@ -145,6 +172,29 @@ public class QueryManager {
 
     public List<Circolo> findAllCircolo() {
         return this.circolo.findAll();
+    }
+
+    public List<Circolo> findTopCircoli(final Integer annoI, final Integer annoF) {
+        return this.circolo.findTopCircoli(annoI, annoF);
+    }
+
+    public Object[][] listCircoliToMatrix(final List<Circolo> list, final int col) {
+        Object[][] matrix = new Object[list.size()][col];
+        Circolo c;
+        int j = 0;
+
+        for (int i = 0; i < list.size(); i++) {
+            c = list.get(i);
+            matrix[i][j++] = c.getId();
+            matrix[i][j++] = c.getOrganizzatore();
+            matrix[i][j++] = c.getNome();
+            matrix[i][j++] = c.getCitta();
+            matrix[i][j++] = c.getIndirizzo();
+            matrix[i][j++] = c.getTelefono();
+            j = 0;
+        }
+
+        return matrix;
     }
 
     public Torneo createTorneo(final Tipo tipo,
@@ -305,6 +355,10 @@ public class QueryManager {
 
     public List<GiocatoriIscritti> findAllIscrittiByPreferenzaOrario(final String prefOrario) {
         return this.viewIscrittiSingoli.findAllIscrittiByPreferenzaOrario(prefOrario);
+    }
+
+    public List<GiocatoriIscritti> findAllIscrittiOrderByClassifica() {
+        return this.viewIscrittiSingoli.orderAllIscrittiByClassifica();
     }
 
     public Object[][] listGiocatoriIscrittiToMatrix(final List<GiocatoriIscritti> list, final int col) {

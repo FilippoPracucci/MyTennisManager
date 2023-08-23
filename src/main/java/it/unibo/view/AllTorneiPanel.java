@@ -17,7 +17,7 @@ import javax.swing.event.ListSelectionListener;
 import it.unibo.controller.db.QueryManager;
 import it.unibo.utils.Pair;
 
-public class AllTournamentsPanel extends JPanel {
+public class AllTorneiPanel extends JPanel {
 
     private static final double WIDTH_PERC = 0.6;
     private static final double HEIGHT_PERC = 0.5;
@@ -32,7 +32,7 @@ public class AllTournamentsPanel extends JPanel {
     Pair<Integer, Integer> edition = new Pair<>(0, 0);
     String tipo = "Singolare maschile";
 
-    public AllTournamentsPanel(final SecondaryFrame frame,
+    public AllTorneiPanel(final SecondaryFrame frame,
             final Dimension dim,
             final QueryManager queryManager,
             final Pair<String, String> credentials) {
@@ -88,9 +88,9 @@ public class AllTournamentsPanel extends JPanel {
 
         this.playersButton.addActionListener(e -> {
             if (tipo.equalsIgnoreCase("Singolare_maschile") || tipo.equalsIgnoreCase("Singolare_femminile")) {
-                new AllRegisteredPanel(new SecondaryFrame(), dim, queryManager, edition, true);
+                new AllIscrittiPanel(new SecondaryFrame(), dim, queryManager, edition, true);
             } else {
-                new AllRegisteredPanel(new SecondaryFrame(), dim, queryManager, edition, false);
+                new AllIscrittiPanel(new SecondaryFrame(), dim, queryManager, edition, false);
             }
         });
 

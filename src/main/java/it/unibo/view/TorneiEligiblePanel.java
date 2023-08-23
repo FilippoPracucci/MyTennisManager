@@ -20,7 +20,7 @@ import javax.swing.event.ListSelectionListener;
 import it.unibo.controller.db.QueryManager;
 import it.unibo.utils.Pair;
 
-public class TournamentsEligiblePanel extends JPanel {
+public class TorneiEligiblePanel extends JPanel {
 
     private static final double WIDTH_PERC = 0.6;
     private static final double HEIGHT_PERC = 0.5;
@@ -37,7 +37,7 @@ public class TournamentsEligiblePanel extends JPanel {
     private final JButton signUp;
     Pair<Integer, Integer> edition = new Pair<>(0, 0);
 
-    public TournamentsEligiblePanel(final SecondaryFrame frame,
+    public TorneiEligiblePanel(final SecondaryFrame frame,
             final Dimension dim,
             final QueryManager queryManager,
             final Pair<String, String> credentials,

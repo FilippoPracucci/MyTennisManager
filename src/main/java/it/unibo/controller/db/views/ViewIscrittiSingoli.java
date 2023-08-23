@@ -112,6 +112,16 @@ public class ViewIscrittiSingoli implements View<GiocatoriIscritti, Tern<Integer
         }
     }
 
+    public List<GiocatoriIscritti> orderAllIscrittiByClassifica() {
+        try (final Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(
+                "SELECT * FROM " + VIEW_NAME + " ORDER BY Classifica ASC");
+            return readGiocatoriIscrittiFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     private List<GiocatoriIscritti> readGiocatoriIscrittiFromResultSet(final ResultSet resultSet) {
         final List<GiocatoriIscritti> iscritti = new ArrayList<>();
         try {

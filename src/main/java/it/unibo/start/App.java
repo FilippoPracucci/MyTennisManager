@@ -83,7 +83,6 @@ public class App {
         this.viewIscrittiSingoli.createView();
         this.viewIscrizioniGiocatore.dropView();
         this.viewIscrizioniGiocatore.createView();*/
-        this.viewIscrittiDoppi.createView();
     }
 
     public void setup() {
@@ -109,6 +108,8 @@ public class App {
         this.viewUnioni.createView();
         this.viewIscrittiSingoli.dropView();
         this.viewIscrittiSingoli.createView();
+        this.viewIscrittiDoppi.dropView();
+        this.viewIscrittiDoppi.createView();
         this.viewIscrizioniGiocatore.dropView();
         this.viewIscrizioniGiocatore.createView();
     }
