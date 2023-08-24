@@ -64,23 +64,6 @@ public class TabellaCoppie implements Table<Coppia, Integer> {
         }
     }
 
-    private List<Coppia> readCoppieFromResultSet(final ResultSet resultSet) {
-        final List<Coppia> coppie = new ArrayList<>();
-        try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
-            while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
-                final int id = resultSet.getInt("Id_Coppia");
-                // After retrieving all the data we create a Student object
-                final Coppia coppia = new Coppia(id);
-                coppie.add(coppia);
-            }
-        } catch (final SQLException e) {}
-        return coppie;
-    }
-
     @Override
     public List<Coppia> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
@@ -105,7 +88,7 @@ public class TabellaCoppie implements Table<Coppia, Integer> {
     }
 
     /*
-     * Impossibile fare una query di UPDATE per una coppia.
+     * Impossible to update couples.
      */
     @Override
     public boolean update(final Coppia coppia) {
@@ -135,5 +118,18 @@ public class TabellaCoppie implements Table<Coppia, Integer> {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private List<Coppia> readCoppieFromResultSet(final ResultSet resultSet) {
+        final List<Coppia> coppie = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                final int id = resultSet.getInt("Id_Coppia");
+
+                final Coppia coppia = new Coppia(id);
+                coppie.add(coppia);
+            }
+        } catch (final SQLException e) {}
+        return coppie;
     }
 }

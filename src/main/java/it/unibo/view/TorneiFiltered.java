@@ -18,7 +18,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 
 public class TorneiFiltered extends JPanel {
@@ -47,7 +47,7 @@ public class TorneiFiltered extends JPanel {
 
     public TorneiFiltered(final SecondaryFrame frame,
             final Dimension dim,
-            final QueryManager queryManager,
+            final QueryManagerImpl queryManager,
             final Pair<String, String> credentials) {
 
         this.setLayout(new BorderLayout());
@@ -158,7 +158,7 @@ public class TorneiFiltered extends JPanel {
     private void updateTable(final JComboBox<Integer> catBox,
             final JComboBox<Integer> etaBox,
             final JComboBox<Integer> annoBox,
-            final QueryManager queryManager,
+            final QueryManagerImpl queryManager,
             final Pair<String, String> credentials) {
         final Optional<Integer> cat;
             final Optional<Integer> eta;

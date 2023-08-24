@@ -122,18 +122,14 @@ public class ViewUnioni implements View<CompagnoUnioni, Pair<Integer, Integer>> 
     private List<CompagnoUnioni> readCompagnoUnioniFromResultSet(final ResultSet resultSet) {
         final List<CompagnoUnioni> unioni = new ArrayList<>();
         try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
             while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
                 final Integer idCoppia = resultSet.getInt("Id_Coppia");
                 final Integer idUtente = resultSet.getInt("Id_Utente");
                 final String nome = resultSet.getString("Nome");
                 final String cognome = resultSet.getString("Cognome");
                 final String classifica = resultSet.getString("Classifica");
                 final String sesso = resultSet.getString("Sesso");
-                // After retrieving all the data we create a Student object
+
                 final CompagnoUnioni unione = new CompagnoUnioni(idCoppia, idUtente, nome, cognome, classifica, sesso);
                 unioni.add(unione);
             }

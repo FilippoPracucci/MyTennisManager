@@ -189,11 +189,7 @@ public class TabellaGiocatori implements Table<Giocatore, Integer> {
     private List<Giocatore> readGiocatoriFromResultSet(final ResultSet resultSet) {
         final List<Giocatore> giocatori = new ArrayList<>();
         try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
             while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
                 final int id = resultSet.getInt("Id_Utente");
                 final String nome = resultSet.getString("Nome");
                 final String cognome = resultSet.getString("Cognome");
@@ -205,7 +201,7 @@ public class TabellaGiocatori implements Table<Giocatore, Integer> {
                 final String sesso = resultSet.getString("Sesso");
                 final String telefono = resultSet.getString("Telefono");
                 final int id_circolo = resultSet.getInt("Id_Circolo");
-                // After retrieving all the data we create a Student object
+
                 final Giocatore giocatore = new Giocatore(id, nome, cognome, email, password, tessera, classifica, eta, sesso, telefono, id_circolo);
                 giocatori.add(giocatore);
             }

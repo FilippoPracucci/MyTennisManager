@@ -22,6 +22,9 @@ public class Organizzatore {
         this.password = Objects.requireNonNull(password);
     }
 
+    /*
+     * Constructor without id.
+     */
     public Organizzatore(final String nome,
             final String cognome,
             final String email,

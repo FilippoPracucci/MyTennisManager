@@ -40,6 +40,9 @@ public class Giocatore {
         this.idCircolo = Objects.requireNonNull(id_circolo);
     }
 
+    /*
+     * Constructor without id.
+     */
     public Giocatore(final String nome,
             final String cognome,
             final String email,

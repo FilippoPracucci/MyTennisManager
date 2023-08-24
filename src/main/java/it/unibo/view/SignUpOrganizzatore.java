@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 
 import java.awt.GridBagLayout;
@@ -38,7 +38,7 @@ public class SignUpOrganizzatore extends JPanel {
     private final JButton signUp;
     private final JButton cancel;
 
-    public SignUpOrganizzatore(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager) {
+    public SignUpOrganizzatore(final SecondaryFrame frame, final Dimension dim, final QueryManagerImpl queryManager) {
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final GridBagLayout layout = new GridBagLayout();
         final GridBagConstraints cnst = new GridBagConstraints();

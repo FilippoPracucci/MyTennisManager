@@ -133,11 +133,7 @@ public class ViewIscrittiSingoli implements View<GiocatoriIscritti, Tern<Integer
     private List<GiocatoriIscritti> readGiocatoriIscrittiFromResultSet(final ResultSet resultSet) {
         final List<GiocatoriIscritti> iscritti = new ArrayList<>();
         try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
             while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
                 final Integer idUtente = resultSet.getInt("Id_Utente");
                 final String nome = resultSet.getString("Nome");
                 final String cognome = resultSet.getString("Cognome");
@@ -149,7 +145,7 @@ public class ViewIscrittiSingoli implements View<GiocatoriIscritti, Tern<Integer
                 final Integer idTorneo = resultSet.getInt("Id_Torneo");
                 final Integer nEdizione = resultSet.getInt("Numero_Edizione");
                 final String prefOrario = resultSet.getString("Preferenza_Orario");
-                // After retrieving all the data we create a Student object
+
                 final GiocatoriIscritti iscritto = new GiocatoriIscritti(idUtente,
                         nome,
                         cognome,

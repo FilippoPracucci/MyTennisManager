@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 
 public class StartMenu extends JPanel {
     private static final double WIDTH_PERC = 0.6;
@@ -28,7 +28,7 @@ public class StartMenu extends JPanel {
     private final JPanel centerPanel;
     private final JPanel southPanel;
 
-    public StartMenu(final MainFrame frame, final QueryManager queryManager) {
+    public StartMenu(final MainFrame frame, final QueryManagerImpl queryManager) {
         final JButton signIn = new JButton(SIGN_IN);
         final JButton signUp = new JButton(SIGN_UP);
         final JButton stats = new JButton(STATISTICS);

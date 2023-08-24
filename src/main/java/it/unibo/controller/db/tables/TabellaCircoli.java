@@ -163,18 +163,14 @@ public class TabellaCircoli implements Table<Circolo, Integer> {
     private List<Circolo> readCircoliFromResultSet(final ResultSet resultSet) {
         final List<Circolo> circoli = new ArrayList<>();
         try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
             while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
                 final int id = resultSet.getInt("Id_Circolo");
                 final int organizzatore = resultSet.getInt("Organizzatore");
                 final String nome = resultSet.getString("Nome");
                 final String citta = resultSet.getString("Citta");
                 final String indirizzo = resultSet.getString("Indirizzo");
                 final String telefono = resultSet.getString("Telefono");
-                // After retrieving all the data we create a Student object
+
                 final Circolo circolo = new Circolo(id, organizzatore, nome, citta, indirizzo, telefono);
                 circoli.add(circolo);
             }

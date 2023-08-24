@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 import it.unibo.utils.Utils;
 
@@ -59,7 +59,7 @@ public class AddEdizioneTorneoPanel extends JPanel {
 
     public AddEdizioneTorneoPanel(final SecondaryFrame frame,
             final Dimension dim,
-            final QueryManager queryManager,
+            final QueryManagerImpl queryManager,
             final Pair<String, String> credentials,
             final Optional<Integer> idT) {
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -232,7 +232,7 @@ public class AddEdizioneTorneoPanel extends JPanel {
         }
     }
 
-    private void createTournamentsList(final JComboBox<Integer> box, final QueryManager qM, final Integer idCircolo) {
+    private void createTournamentsList(final JComboBox<Integer> box, final QueryManagerImpl qM, final Integer idCircolo) {
         qM.findAllTorneoByCircolo(qM.findCircolo(idCircolo).get()).forEach(t -> box.addItem(t.getId()));
     }
 }

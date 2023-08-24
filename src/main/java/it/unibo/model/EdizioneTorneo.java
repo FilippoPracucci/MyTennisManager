@@ -23,14 +23,6 @@ public class EdizioneTorneo {
         this.idCircolo = circolo;
     }
 
-    /*public EdizioneTorneo(final Integer id_torneo,
-            final Date d_inizio,
-            final Date d_fine,
-            final Integer circolo) {
-
-        this(id_torneo, null, d_inizio, d_fine, circolo);
-    }*/
-
     public Integer getIdTorneo() {
         return this.idTorneo;
     }

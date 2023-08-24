@@ -175,18 +175,14 @@ public class TabellaIscrizioni implements Table<Iscrizione, Integer> {
     private List<Iscrizione> readIscrizioniFromResultSet(final ResultSet resultSet) {
         final List<Iscrizione> iscrizioni = new ArrayList<>();
         try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
             while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
                 final int id = resultSet.getInt("Id_Iscrizione");
                 final Optional<String> pref_orario = Optional.ofNullable(resultSet.getString("Preferenza_Orario"));
                 final int torneo = resultSet.getInt("Id_Torneo");
                 final int num_edizione = resultSet.getInt("Numero_Edizione");
                 final Optional<Integer> utente = Optional.ofNullable(resultSet.getInt("Id_Utente"));
                 final Optional<Integer> coppia = Optional.ofNullable(resultSet.getInt("Id_Coppia"));
-                // After retrieving all the data we create a Student object
+
                 final Iscrizione iscrizione = new Iscrizione(id, pref_orario, torneo, num_edizione, utente, coppia);
                 iscrizioni.add(iscrizione);
             }

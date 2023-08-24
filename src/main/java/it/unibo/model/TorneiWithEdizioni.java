@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import it.unibo.model.Torneo.Tipo;
 
-public class TorneiWithEditions {
+public class TorneiWithEdizioni {
 
     private final Integer idTorneo;
     private final Integer nEdizione;
@@ -17,7 +17,7 @@ public class TorneiWithEditions {
     private final Optional<Integer> montepremi;
     private final Integer idCircolo;
 
-    public TorneiWithEditions(final Integer idTorneo,
+    public TorneiWithEdizioni(final Integer idTorneo,
             final Integer nEdizione,
             final Tipo tipo,
             final Date dInizio,

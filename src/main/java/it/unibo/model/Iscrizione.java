@@ -26,23 +26,6 @@ public class Iscrizione {
         this.idCoppia = Objects.requireNonNull(coppia);
     }
 
-    public Iscrizione(final Integer id,
-            final String preferenza_orario,
-            final Integer torneo,
-            final Integer n_edizione,
-            final Integer utente,
-            final Integer coppia) {
-        this(id, Optional.ofNullable(preferenza_orario), torneo, n_edizione, Optional.ofNullable(utente), Optional.ofNullable(coppia));
-   }
-
-   public Iscrizione(final Integer id,
-            final Integer torneo,
-            final Integer n_edizione,
-            final Integer utente,
-            final Integer coppia) {
-        this(id, Optional.empty(), torneo, n_edizione, Optional.ofNullable(utente), Optional.ofNullable(coppia));
-   }
-
     public Integer getId() {
         return this.id;
     }

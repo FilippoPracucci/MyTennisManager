@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.model.Torneo.Tipo;
 import it.unibo.utils.Pair;
 
@@ -45,7 +45,7 @@ public class AddTorneoPanel extends JPanel {
     private final JButton signUp;
     private final JButton cancel;
 
-    public AddTorneoPanel(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager, Pair<String, String> credentials) {
+    public AddTorneoPanel(final SecondaryFrame frame, final Dimension dim, final QueryManagerImpl queryManager, Pair<String, String> credentials) {
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final GridBagLayout layout = new GridBagLayout();
         final GridBagConstraints cnst = new GridBagConstraints();

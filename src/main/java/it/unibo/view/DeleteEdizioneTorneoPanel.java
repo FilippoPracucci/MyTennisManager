@@ -17,7 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 
 public class DeleteEdizioneTorneoPanel extends JPanel {
@@ -50,7 +50,7 @@ public class DeleteEdizioneTorneoPanel extends JPanel {
 
     public DeleteEdizioneTorneoPanel(final SecondaryFrame frame,
             final Dimension dim,
-            final QueryManager queryManager,
+            final QueryManagerImpl queryManager,
             final Pair<String, String> credentials) {
 
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -91,8 +91,8 @@ public class DeleteEdizioneTorneoPanel extends JPanel {
         this.endDate = new JLabel();
         this.dFormat = new SimpleDateFormat("dd-MM-YYYY");
         if (this.id.isPresent() && this.nE.isPresent()) {
-            this.startDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataInizio()));
-            this.endDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataFine()));
+            this.startDate.setText(this.dFormat.format(queryManager.findEdizioneTorneo(this.key).getDataInizio()));
+            this.endDate.setText(this.dFormat.format(queryManager.findEdizioneTorneo(this.key).getDataFine()));
         }
 
         this.idTournamentBox.addItemListener(e -> {
@@ -103,16 +103,16 @@ public class DeleteEdizioneTorneoPanel extends JPanel {
             ).stream().map(et -> et.getNumeroEdizione()).toList(), nEditionBox);
             this.nE = Optional.of((Integer) this.nEditionBox.getModel().getSelectedItem());
             this.key = new Pair<>(this.id.get(), this.nE.get());
-            this.startDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataInizio()));
-            this.endDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataFine()));
+            this.startDate.setText(this.dFormat.format(queryManager.findEdizioneTorneo(this.key).getDataInizio()));
+            this.endDate.setText(this.dFormat.format(queryManager.findEdizioneTorneo(this.key).getDataFine()));
         });
 
         this.nEditionBox.addItemListener(e -> {
             this.nE = Optional.ofNullable((Integer) this.nEditionBox.getModel().getSelectedItem());
             if (this.nE.isPresent()) {
                 this.key = new Pair<>(this.id.get(), this.nE.get());
-                this.startDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataInizio()));
-                this.endDate.setText(this.dFormat.format(queryManager.findEdizioneByPrimaryKey(this.key).getDataFine()));
+                this.startDate.setText(this.dFormat.format(queryManager.findEdizioneTorneo(this.key).getDataInizio()));
+                this.endDate.setText(this.dFormat.format(queryManager.findEdizioneTorneo(this.key).getDataFine()));
             }
         });
 
@@ -122,7 +122,6 @@ public class DeleteEdizioneTorneoPanel extends JPanel {
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
-        //startFrame(frame);
         cnst.gridy = 0;
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;

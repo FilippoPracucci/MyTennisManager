@@ -78,27 +78,6 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
         }
     }
 
-    private List<EdizioneTorneo> readEdizioniTorneoFromResultSet(final ResultSet resultSet) {
-        final List<EdizioneTorneo> edizioniTorneo = new ArrayList<>();
-        try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
-            while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
-                final int id = resultSet.getInt("Id_Torneo");
-                final int numeroEdizione = resultSet.getInt("Numero_Edizione");
-                final Date dataInizio = Utils.sqlDateToDate(resultSet.getDate("Data_Inizio"));
-                final Date dataFine = Utils.sqlDateToDate(resultSet.getDate("Data_Fine"));
-                final int circolo = resultSet.getInt("Id_Circolo");
-                // After retrieving all the data we create a Student object
-                final EdizioneTorneo edizioneTorneo = new EdizioneTorneo(id, numeroEdizione, dataInizio, dataFine, circolo);
-                edizioniTorneo.add(edizioneTorneo);
-            }
-        } catch (final SQLException e) {}
-        return edizioniTorneo;
-    }
-
     @Override
     public List<EdizioneTorneo> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
@@ -195,5 +174,22 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private List<EdizioneTorneo> readEdizioniTorneoFromResultSet(final ResultSet resultSet) {
+        final List<EdizioneTorneo> edizioniTorneo = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                final int id = resultSet.getInt("Id_Torneo");
+                final int numeroEdizione = resultSet.getInt("Numero_Edizione");
+                final Date dataInizio = Utils.sqlDateToDate(resultSet.getDate("Data_Inizio"));
+                final Date dataFine = Utils.sqlDateToDate(resultSet.getDate("Data_Fine"));
+                final int circolo = resultSet.getInt("Id_Circolo");
+
+                final EdizioneTorneo edizioneTorneo = new EdizioneTorneo(id, numeroEdizione, dataInizio, dataFine, circolo);
+                edizioniTorneo.add(edizioneTorneo);
+            }
+        } catch (final SQLException e) {}
+        return edizioniTorneo;
     }
 }

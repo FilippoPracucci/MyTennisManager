@@ -70,43 +70,10 @@ public class TabellaTornei implements Table<Torneo, Integer> {
         }
     }
 
-    private List<Torneo> readTorneiFromResultSet(final ResultSet resultSet) {
-        final List<Torneo> tornei = new ArrayList<>();
-        try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
-            while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
-                final Integer id = resultSet.getInt("Id_Torneo");
-                final Tipo tipo = Tipo.getTipo(resultSet.getString("Tipo"));
-                final Optional<Integer> limite_categoria = Optional.ofNullable(resultSet.getInt("Limite_Categoria"));
-                final Optional<Integer> limite_eta = Optional.ofNullable(resultSet.getInt("Limite_Eta"));
-                final Optional<Integer> montepremi = Optional.ofNullable(resultSet.getInt("Montepremi"));
-                // After retrieving all the data we create a Student object
-                final Torneo torneo = new Torneo(id, tipo, limite_categoria, limite_eta, montepremi);
-                tornei.add(torneo);
-            }
-        } catch (final SQLException e) {}
-        return tornei;
-    }
-
     @Override
     public List<Torneo> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
-            return readTorneiFromResultSet(resultSet);
-        } catch (final SQLException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public List<Torneo> findAllByCircolo(final Integer idCircolo) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Torneo IN " +
-                "(SELECT EDIZIONE_TORNEI.Id_Torneo FROM EDIZIONE_TORNEI WHERE Id_Circolo = ?)";
-        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setInt(1, idCircolo);
-            final ResultSet resultSet = statement.executeQuery();
             return readTorneiFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
@@ -175,6 +142,18 @@ public class TabellaTornei implements Table<Torneo, Integer> {
         }
     }
 
+    public List<Torneo> findAllByCircolo(final Integer idCircolo) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Torneo IN " +
+                "(SELECT EDIZIONE_TORNEI.Id_Torneo FROM EDIZIONE_TORNEI WHERE Id_Circolo = ?)";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, idCircolo);
+            final ResultSet resultSet = statement.executeQuery();
+            return readTorneiFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public List<Torneo> findAllSingolariEligible(final int eta, final int categoria, final String sesso) {
         String t;
         if (sesso.contentEquals("M")) {
@@ -227,5 +206,22 @@ public class TabellaTornei implements Table<Torneo, Integer> {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private List<Torneo> readTorneiFromResultSet(final ResultSet resultSet) {
+        final List<Torneo> tornei = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                final Integer id = resultSet.getInt("Id_Torneo");
+                final Tipo tipo = Tipo.getTipo(resultSet.getString("Tipo"));
+                final Optional<Integer> limite_categoria = Optional.ofNullable(resultSet.getInt("Limite_Categoria"));
+                final Optional<Integer> limite_eta = Optional.ofNullable(resultSet.getInt("Limite_Eta"));
+                final Optional<Integer> montepremi = Optional.ofNullable(resultSet.getInt("Montepremi"));
+
+                final Torneo torneo = new Torneo(id, tipo, limite_categoria, limite_eta, montepremi);
+                tornei.add(torneo);
+            }
+        } catch (final SQLException e) {}
+        return tornei;
     }
 }

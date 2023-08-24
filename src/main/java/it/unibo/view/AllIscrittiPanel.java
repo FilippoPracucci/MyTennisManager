@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 
 public class AllIscrittiPanel extends JPanel{
@@ -39,7 +39,7 @@ public class AllIscrittiPanel extends JPanel{
 
     public AllIscrittiPanel(final SecondaryFrame frame,
             final Dimension dim,
-            final QueryManager queryManager,
+            final QueryManagerImpl queryManager,
             final Pair<Integer, Integer> edition,
             final boolean isPlayer) {
 
@@ -71,14 +71,14 @@ public class AllIscrittiPanel extends JPanel{
         if (isPlayer) {
             this.model = new DefaultTableModel(queryManager.listGiocatoriIscrittiToMatrix(
                     queryManager.findAllGiocatoriIscrittiByEdizioneTorneo(
-                        queryManager.findEdizioneByPrimaryKey(edition)
+                        queryManager.findEdizioneTorneo(edition)
                     ), this.columnsSingles.size()),
                 this.columnsSingles.toArray()
             );
         } else {
             this.model = new DefaultTableModel(queryManager.listCoppieIscritteToMatrix(
                     queryManager.findAllCoppieIscritteByEdizioneTorneo(
-                        queryManager.findEdizioneByPrimaryKey(edition)
+                        queryManager.findEdizioneTorneo(edition)
                     ), this.columnsDoubles.size()),
                 this.columnsDoubles.toArray()
             );
@@ -141,7 +141,7 @@ public class AllIscrittiPanel extends JPanel{
             if (isPlayer) {
             this.model = new DefaultTableModel(queryManager.listGiocatoriIscrittiToMatrix(
                     queryManager.findAllGiocatoriIscrittiByEdizioneTorneo(
-                        queryManager.findEdizioneByPrimaryKey(edition)
+                        queryManager.findEdizioneTorneo(edition)
                     ), this.columnsSingles.size()),
                 this.columnsSingles.toArray()
             );

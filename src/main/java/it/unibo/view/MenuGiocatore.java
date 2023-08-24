@@ -7,7 +7,7 @@ import java.util.Optional;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 
 public class MenuGiocatore extends JPanel {
@@ -28,7 +28,7 @@ public class MenuGiocatore extends JPanel {
 
     public MenuGiocatore(final SecondaryFrame frame,
             final Dimension dim,
-            final QueryManager queryManager,
+            final QueryManagerImpl queryManager,
             final Pair<String, String> credentials) {
 
         this.pane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);

@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.model.EdizioneTorneo;
 import it.unibo.utils.Pair;
 
@@ -49,7 +49,7 @@ public class DeleteTorneoPanel extends JPanel {
 
     public DeleteTorneoPanel(final SecondaryFrame frame,
             final Dimension dim,
-            final QueryManager queryManager,
+            final QueryManagerImpl queryManager,
             final Pair<String, String> credentials) {
 
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -102,7 +102,6 @@ public class DeleteTorneoPanel extends JPanel {
         this.setLayout(layout);
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
                 Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
-        //startFrame(frame);
         cnst.gridy = 0;
         cnst.insets = insets;
         cnst.weighty = GridBagConstraints.CENTER;

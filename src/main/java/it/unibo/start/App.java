@@ -1,7 +1,7 @@
 package it.unibo.start;
 
 import it.unibo.controller.db.ConnectionProvider;
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.controller.db.tables.TabellaCircoli;
 import it.unibo.controller.db.tables.TabellaCoppie;
 import it.unibo.controller.db.tables.TabellaEdizioniTorneo;
@@ -37,7 +37,7 @@ public class App {
     private final ViewIscrittiSingoli viewIscrittiSingoli;
     private final ViewIscrittiDoppi viewIscrittiDoppi;
     private final ViewIscrizioniGiocatore viewIscrizioniGiocatore;
-    private QueryManager queryManager;
+    private QueryManagerImpl queryManager;
 
     private MainFrame frame;
 
@@ -56,7 +56,7 @@ public class App {
         this.viewIscrittiSingoli = new ViewIscrittiSingoli(this.connectionProvider.getMySQLConnection());
         this.viewIscrittiDoppi = new ViewIscrittiDoppi(this.connectionProvider.getMySQLConnection());
         this.viewIscrizioniGiocatore = new ViewIscrizioniGiocatore(this.connectionProvider.getMySQLConnection());
-        this.queryManager = new QueryManager(this.connectionProvider);
+        this.queryManager = new QueryManagerImpl(this.connectionProvider);
         this.frame = new MainFrame(this.queryManager);
         
         /*this.tabellaCircoli.dropTable();

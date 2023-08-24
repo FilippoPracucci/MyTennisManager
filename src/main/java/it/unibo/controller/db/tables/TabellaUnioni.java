@@ -68,24 +68,6 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
         }
     }
 
-    private List<Unione> readUnioniFromResultSet(final ResultSet resultSet) {
-        final List<Unione> unioni = new ArrayList<>();
-        try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
-            while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
-                final int idCoppia = resultSet.getInt("Id_Coppia");
-                final int idGiocatore = resultSet.getInt("Id_Giocatore");
-                // After retrieving all the data we create a Student object
-                final Unione unione = new Unione(idCoppia, idGiocatore);
-                unioni.add(unione);
-            }
-        } catch (final SQLException e) {}
-        return unioni;
-    }
-
     @Override
     public List<Unione> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
@@ -112,7 +94,7 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
     }
 
     /*
-     * Impossibile fare una query di UPDATE per un'unione.
+     * Impossible to update unions.
      */
     @Override
     public boolean update(final Unione unione) {
@@ -159,6 +141,20 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
         } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private List<Unione> readUnioniFromResultSet(final ResultSet resultSet) {
+        final List<Unione> unioni = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                final int idCoppia = resultSet.getInt("Id_Coppia");
+                final int idGiocatore = resultSet.getInt("Id_Giocatore");
+
+                final Unione unione = new Unione(idCoppia, idGiocatore);
+                unioni.add(unione);
+            }
+        } catch (final SQLException e) {}
+        return unioni;
     }
 
     private List<Integer> readIdCoppiaFromResultSet(final ResultSet resultSet) {

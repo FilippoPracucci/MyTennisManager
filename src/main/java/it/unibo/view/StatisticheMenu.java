@@ -6,7 +6,7 @@ import java.awt.FlowLayout;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 
 public class StatisticheMenu extends JPanel {
 
@@ -22,7 +22,7 @@ public class StatisticheMenu extends JPanel {
 
     public StatisticheMenu(final SecondaryFrame frame,
         final Dimension dim,
-        final QueryManager queryManager) {
+        final QueryManagerImpl queryManager) {
 
         this.pane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
 

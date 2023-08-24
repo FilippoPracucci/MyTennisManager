@@ -48,6 +48,9 @@ public class Torneo {
         this.montepremi = montepremi;
     }
 
+    /*
+     * Constructor without id.
+     */
     public Torneo(final Tipo tipo,
             final Optional<Integer> limite_cat,
             final Optional<Integer> limite_eta,
@@ -58,29 +61,6 @@ public class Torneo {
         this.limiteCategoria = limite_cat;
         this.limiteEta = limite_eta;
         this.montepremi = montepremi;
-    }
-
-    /*
-     * Constructor with all the optional paramaters null.
-     */
-    public Torneo(final Tipo tipo) {
-        this(null, tipo, Optional.empty(), Optional.empty(), Optional.empty());
-    }
-
-    /*
-     * Constructor with the optionl paramaters limite_eta and montepremi null.
-     */
-    public Torneo(final Tipo tipo, final int limite_cat) {
-        this(null, tipo, Optional.of(Integer.valueOf(limite_cat)), Optional.empty(), Optional.empty());
-    }
-
-    /*
-     * Constructor with the optionl paramaters lmontepremi null.
-     */
-    public Torneo(final Tipo tipo,
-            final int limite_cat,
-            final int limite_eta) {
-        this(null, tipo, Optional.of(Integer.valueOf(limite_cat)), Optional.of(Integer.valueOf(limite_eta)), Optional.empty());
     }
 
     public Integer getId() {

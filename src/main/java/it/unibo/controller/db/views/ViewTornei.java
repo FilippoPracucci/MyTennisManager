@@ -14,12 +14,12 @@ import java.util.Optional;
 import it.unibo.controller.db.View;
 import it.unibo.model.Circolo;
 import it.unibo.model.Giocatore;
-import it.unibo.model.TorneiWithEditions;
+import it.unibo.model.TorneiWithEdizioni;
 import it.unibo.model.Torneo.Tipo;
 import it.unibo.utils.Pair;
 import it.unibo.utils.Utils;
 
-public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Integer>> {
+public class ViewTornei implements View<TorneiWithEdizioni, Pair<Integer, Integer>> {
 
     public static final String VIEW_NAME = "TORNEI_CON_EDIZIONI";
 
@@ -64,7 +64,7 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
     }
 
     @Override
-    public Optional<TorneiWithEditions> findByPrimaryKey(final Pair<Integer, Integer> key) {
+    public Optional<TorneiWithEdizioni> findByPrimaryKey(final Pair<Integer, Integer> key) {
         final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Torneo = ? AND Numero_Edizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, key.getX());
@@ -77,7 +77,7 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
     }
 
     @Override
-    public List<TorneiWithEditions> findAll() {
+    public List<TorneiWithEdizioni> findAll() {
         try (final Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + VIEW_NAME);
             return readTorneiWithEditionsFromResultSet(resultSet);
@@ -86,7 +86,7 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
         }
     }
 
-    public List<TorneiWithEditions> findAllEdizioniByCircolo(final Circolo circolo) {
+    public List<TorneiWithEdizioni> findAllEdizioniByCircolo(final Circolo circolo) {
         final String query =
             "SELECT * FROM " + VIEW_NAME +
             " WHERE Id_Circolo = ?";
@@ -99,7 +99,7 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
         }
     }
 
-    public List<TorneiWithEditions> findAllSingolariEligibleByPlayer (final Giocatore giocatore) {
+    public List<TorneiWithEdizioni> findAllSingolariEligibleByPlayer (final Giocatore giocatore) {
         String t;
         final char first = giocatore.getClassifica().charAt(0);
         final int cat;
@@ -144,7 +144,7 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
         }
     }
 
-    public List<TorneiWithEditions> findAllDoppiEligibleByCoppia (final Pair<Giocatore, Giocatore> coppia, final Integer id) {
+    public List<TorneiWithEdizioni> findAllDoppiEligibleByCoppia (final Pair<Giocatore, Giocatore> coppia, final Integer id) {
         final char first1 = coppia.getX().getClassifica().charAt(0);
         final char first2 = coppia.getY().getClassifica().charAt(0);
         final int cat;
@@ -207,7 +207,7 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
         }
     }
 
-    public List<TorneiWithEditions> findAllFiltered(final Giocatore giocatore, final Optional<Integer> categoria, final Optional<Integer> eta, final Optional<String> data) {
+    public List<TorneiWithEdizioni> findAllFiltered(final Giocatore giocatore, final Optional<Integer> categoria, final Optional<Integer> eta, final Optional<String> data) {
         String t;
         final char first = giocatore.getClassifica().charAt(0);
         final int cat;
@@ -265,14 +265,10 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
         }
     }
 
-    private List<TorneiWithEditions> readTorneiWithEditionsFromResultSet(final ResultSet resultSet) {
-        final List<TorneiWithEditions> tornei = new ArrayList<>();
+    private List<TorneiWithEdizioni> readTorneiWithEditionsFromResultSet(final ResultSet resultSet) {
+        final List<TorneiWithEdizioni> tornei = new ArrayList<>();
         try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
             while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
                 final Integer idTorneo = resultSet.getInt("Id_Torneo");
                 final Integer nEdizione = resultSet.getInt("Numero_Edizione");
                 final Tipo tipo = Tipo.getTipo(resultSet.getString("Tipo"));
@@ -282,8 +278,8 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
                 final Optional<Integer> limite_eta = Optional.ofNullable(resultSet.getInt("Limite_Eta"));
                 final Optional<Integer> montepremi = Optional.ofNullable(resultSet.getInt("Montepremi"));
                 final Integer idCircolo = resultSet.getInt("Id_Circolo");
-                // After retrieving all the data we create a Student object
-                final TorneiWithEditions torneo = new TorneiWithEditions(idTorneo, nEdizione, tipo, dInizio, dFine, limite_categoria, limite_eta, montepremi, idCircolo);
+
+                final TorneiWithEdizioni torneo = new TorneiWithEdizioni(idTorneo, nEdizione, tipo, dInizio, dFine, limite_categoria, limite_eta, montepremi, idCircolo);
                 tornei.add(torneo);
             }
         } catch (final SQLException e) {}

@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 
 public class SignInMenu extends JPanel {
@@ -32,7 +32,7 @@ public class SignInMenu extends JPanel {
     private final JButton signIn;
     private final JButton cancel;
 
-    public SignInMenu(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager) {
+    public SignInMenu(final SecondaryFrame frame, final Dimension dim, final QueryManagerImpl queryManager) {
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final GridBagLayout layout = new GridBagLayout();
         final GridBagConstraints cnst = new GridBagConstraints();

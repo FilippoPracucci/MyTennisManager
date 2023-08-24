@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 
 public class StatisticheGiocatoriPanel extends JPanel {
 
@@ -38,7 +38,7 @@ public class StatisticheGiocatoriPanel extends JPanel {
 
     public StatisticheGiocatoriPanel (final SecondaryFrame frame,
             final Dimension dim,
-            final QueryManager queryManager) {
+            final QueryManagerImpl queryManager) {
 
         this.setLayout(new BorderLayout());
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),

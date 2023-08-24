@@ -17,7 +17,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 
 public class TorneiEligiblePanel extends JPanel {
@@ -39,7 +39,7 @@ public class TorneiEligiblePanel extends JPanel {
 
     public TorneiEligiblePanel(final SecondaryFrame frame,
             final Dimension dim,
-            final QueryManager queryManager,
+            final QueryManagerImpl queryManager,
             final Pair<String, String> credentials,
             final boolean isPlayer,
             final Optional<Integer> couple) {

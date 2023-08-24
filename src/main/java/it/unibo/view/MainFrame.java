@@ -3,14 +3,14 @@ package it.unibo.view;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 
 public class MainFrame extends JFrame {
     private static final String FRAME_NAME = "MyTennisManager";
 
     private final StartMenu menu;
 
-    public MainFrame(final QueryManager qM) {
+    public MainFrame(final QueryManagerImpl qM) {
         super(FRAME_NAME);
         menu = new StartMenu(this, qM);
         this.add(menu);

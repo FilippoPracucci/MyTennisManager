@@ -131,11 +131,7 @@ public class ViewIscrittiDoppi implements View<CoppieIscritte, Tern<Integer, Int
     private List<CoppieIscritte> readCoppieIscritteFromResultSet(final ResultSet resultSet) {
         final List<CoppieIscritte> iscritte = new ArrayList<>();
         try {
-            // ResultSet encapsulate a pointer to a table with the results: it starts with the pointer
-            // before the first row. With next the pointer advances to the following row and returns 
-            // true if it has not advanced past the last row
             while (resultSet.next()) {
-                // To get the values of the columns of the row currently pointed we use the get methods 
                 final Integer idCoppia = resultSet.getInt("Id_Coppia");
                 final Pair<Giocatore, Giocatore> giocatori = this.findGiocatoriOfCoppia(idCoppia);
                 final Integer g1 = giocatori.getX().getId();
@@ -149,7 +145,7 @@ public class ViewIscrittiDoppi implements View<CoppieIscritte, Tern<Integer, Int
                 final Integer idTorneo = resultSet.getInt("Id_Torneo");
                 final Integer nEdizione = resultSet.getInt("Numero_Edizione");
                 final String prefOrario = resultSet.getString("Preferenza_Orario");
-                // After retrieving all the data we create a Student object
+
                 final CoppieIscritte iscritta = new CoppieIscritte(idCoppia,
                         g1,
                         g2,

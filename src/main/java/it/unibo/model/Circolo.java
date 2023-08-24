@@ -25,6 +25,9 @@ public class Circolo {
         this.telefono = Objects.requireNonNull(telefono);
     }
 
+    /*
+     * Constructor without id.
+     */
     public Circolo(final Integer organizzatore,
             final String nome,
             final String citta,

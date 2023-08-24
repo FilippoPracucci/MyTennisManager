@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -26,7 +26,7 @@ public class SignUpGiocatore extends JPanel {
     private static final String SURNAME_LABEL = "Cognome";
     private static final String EMAIL_LABEL = "Email";
     private static final String PASSWORD_LABEL = "Password";
-    private static final String CARD_LABEL = "Tessera";
+    private static final String BADGE_LABEL = "Tessera";
     private static final String RANKING_LABEL = "Classifica";
     private static final String AGE_LABEL = "Eta'";
     private static final String GENDER_LABEL = "Sesso";
@@ -39,7 +39,7 @@ public class SignUpGiocatore extends JPanel {
     private final JLabel surnameLabel;
     private final JLabel emailLabel;
     private final JLabel passwordLabel;
-    private final JLabel cardLabel;
+    private final JLabel badgeLabel;
     private final JLabel rankingLabel;
     private final JLabel ageLabel;
     private final JLabel genderLabel;
@@ -49,7 +49,7 @@ public class SignUpGiocatore extends JPanel {
     private final JTextField surnameField;
     private final JTextField emailField;
     private final JTextField passwordField;
-    private final JTextField cardField;
+    private final JTextField badgeField;
     private final JTextField rankingField;
     private final JTextField ageField;
     private final JTextField phoneField;
@@ -58,7 +58,7 @@ public class SignUpGiocatore extends JPanel {
     private final JButton signUp;
     private final JButton cancel;
 
-    public SignUpGiocatore(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager) {
+    public SignUpGiocatore(final SecondaryFrame frame, final Dimension dim, final QueryManagerImpl queryManager) {
         final JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final GridBagLayout layout = new GridBagLayout();
         final GridBagConstraints cnst = new GridBagConstraints();
@@ -71,7 +71,7 @@ public class SignUpGiocatore extends JPanel {
         this.surnameLabel = new JLabel(SURNAME_LABEL);
         this.emailLabel = new JLabel(EMAIL_LABEL);
         this.passwordLabel = new JLabel(PASSWORD_LABEL);
-        this.cardLabel = new JLabel(CARD_LABEL);
+        this.badgeLabel = new JLabel(BADGE_LABEL);
         this.rankingLabel = new JLabel(RANKING_LABEL);
         this.ageLabel = new JLabel(AGE_LABEL);
         this.genderLabel = new JLabel(GENDER_LABEL);
@@ -82,7 +82,7 @@ public class SignUpGiocatore extends JPanel {
         this.surnameField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
         this.emailField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
         this.passwordField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
-        this.cardField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
+        this.badgeField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
         this.rankingField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
         this.ageField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
         this.phoneField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
@@ -104,7 +104,7 @@ public class SignUpGiocatore extends JPanel {
         addField(this.surnameLabel, this.surnameField, cnst);
         addField(this.emailLabel, this.emailField, cnst);
         addField(this.passwordLabel, this.passwordField, cnst);
-        addField(this.cardLabel, this.cardField, cnst);
+        addField(this.badgeLabel, this.badgeField, cnst);
         addField(this.rankingLabel, this.rankingField, cnst);
         addField(this.ageLabel, this.ageField, cnst);
         cnst.gridx = 0;
@@ -138,7 +138,7 @@ public class SignUpGiocatore extends JPanel {
                     this.surnameField.getText(),
                     this.emailField.getText(),
                     this.passwordField.getText(),
-                    this.cardField.getText(),
+                    this.badgeField.getText(),
                     this.rankingField.getText(),
                     Integer.valueOf(this.ageField.getText()).intValue(),
                     gender,
@@ -173,7 +173,7 @@ public class SignUpGiocatore extends JPanel {
         cnst.gridy += 2;
     }
 
-    private void createList(final JComboBox<Integer> box, final QueryManager qM) {
+    private void createList(final JComboBox<Integer> box, final QueryManagerImpl qM) {
         qM.findAllCircolo().forEach(c -> box.addItem(c.getId()));
     }
 }

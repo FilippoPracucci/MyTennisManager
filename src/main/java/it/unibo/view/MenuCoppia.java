@@ -17,7 +17,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 
 public class MenuCoppia extends JPanel {
@@ -50,7 +50,7 @@ public class MenuCoppia extends JPanel {
 
     public MenuCoppia(final SecondaryFrame frame,
             final Dimension dim,
-            final QueryManager queryManager,
+            final QueryManagerImpl queryManager,
             final Pair<String, String> credentials) {
 
         this.setLayout(new BorderLayout());

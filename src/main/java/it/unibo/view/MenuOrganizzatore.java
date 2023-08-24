@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
-import it.unibo.controller.db.QueryManager;
+import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.utils.Pair;
 
 public class MenuOrganizzatore extends JPanel {
@@ -29,7 +29,7 @@ public class MenuOrganizzatore extends JPanel {
     private final JPanel deleteTournamentPanel;
     private final JPanel deleteEditionPanel;
 
-    public MenuOrganizzatore(final SecondaryFrame frame, final Dimension dim, final QueryManager queryManager, final Pair<String, String> credentials) {
+    public MenuOrganizzatore(final SecondaryFrame frame, final Dimension dim, final QueryManagerImpl queryManager, final Pair<String, String> credentials) {
         this.pane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
         this.newTournament = new AddTorneoPanel(frame, dim, queryManager, credentials);
         this.newTournamentEdition = new AddEdizioneTorneoPanel(frame, dim, queryManager, credentials, Optional.empty());
