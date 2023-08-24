@@ -111,13 +111,13 @@ public class AllIscrittiPanel extends JPanel{
         this.timePreference.addItemListener(e -> {
             if (isPlayer) {
                 this.model = new DefaultTableModel(queryManager.listGiocatoriIscrittiToMatrix(
-                        queryManager.findAllIscrittiByPreferenzaOrario(Objects.toString(this.timePreference.getSelectedItem())),
+                        queryManager.findAllIscrittiByPreferenzaOrario(Objects.toString(this.timePreference.getSelectedItem()), edition),
                         this.columnsSingles.size()
                     ), this.columnsSingles.toArray()
                 );
             } else {
                 this.model = new DefaultTableModel(queryManager.listCoppieIscritteToMatrix(
-                        queryManager.findAllCoppieIscritteByPreferenzaOrario(Objects.toString(this.timePreference.getSelectedItem())),
+                        queryManager.findAllCoppieIscritteByPreferenzaOrario(Objects.toString(this.timePreference.getSelectedItem()), edition),
                         this.columnsDoubles.size()
                     ), this.columnsDoubles.toArray()
                 );
@@ -128,7 +128,7 @@ public class AllIscrittiPanel extends JPanel{
         this.orderButton.addActionListener(e -> {
             if (isPlayer) {
                 this.model = new DefaultTableModel(queryManager.listGiocatoriIscrittiToMatrix(
-                        queryManager.findAllIscrittiOrderByClassifica(),
+                        queryManager.findAllIscrittiOrderByClassifica(edition),
                         this.columnsSingles.size()
                     ), this.columnsSingles.toArray()
                 );

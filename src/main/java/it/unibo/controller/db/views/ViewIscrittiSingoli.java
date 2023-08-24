@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import it.unibo.controller.db.View;
 import it.unibo.model.GiocatoriIscritti;
+import it.unibo.utils.Pair;
 import it.unibo.utils.Tern;
 
 public class ViewIscrittiSingoli implements View<GiocatoriIscritti, Tern<Integer, Integer, Integer>> {
@@ -94,16 +95,19 @@ public class ViewIscrittiSingoli implements View<GiocatoriIscritti, Tern<Integer
         }
     }
 
-    public List<GiocatoriIscritti> findAllIscrittiByPreferenzaOrario(final String timePreference) {
+    public List<GiocatoriIscritti> findAllIscrittiByPreferenzaOrario(final String timePreference, final Pair<Integer, Integer> edition) {
         final String query;
         if (timePreference == "Nessuna") {
-            query = "SELECT * FROM " + VIEW_NAME;
+            query = "SELECT DISTINCT * FROM " + VIEW_NAME  + " WHERE Id_Torneo = ? AND Numero_Edizione = ?";
         } else {
-            query = "SELECT * FROM " + VIEW_NAME + " WHERE Preferenza_Orario IS NULL OR Preferenza_Orario = ?";
+            query = "SELECT DISTINCT * FROM " + VIEW_NAME + " WHERE Id_Torneo = ? AND Numero_Edizione = ? " +
+                "AND (Preferenza_Orario IS NULL OR Preferenza_Orario = ?)";
         }
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, edition.getX());
+            statement.setInt(2, edition.getY());
             if (timePreference != "Nessuna") {
-                statement.setString(1, timePreference);
+                statement.setString(3, timePreference);
             }
             final ResultSet resultSet = statement.executeQuery();
             return readGiocatoriIscrittiFromResultSet(resultSet);
@@ -112,10 +116,14 @@ public class ViewIscrittiSingoli implements View<GiocatoriIscritti, Tern<Integer
         }
     }
 
-    public List<GiocatoriIscritti> orderAllIscrittiByClassifica() {
-        try (final Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery(
-                "SELECT * FROM " + VIEW_NAME + " ORDER BY Classifica ASC");
+    public List<GiocatoriIscritti> orderAllIscrittiByClassifica(final Pair<Integer, Integer> edition) {
+        final String query = "SELECT * FROM " + VIEW_NAME +
+            " WHERE Id_Torneo = ? AND Numero_Edizione = ? " +
+            "ORDER BY Classifica ASC";
+        try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, edition.getX());
+            statement.setInt(2, edition.getY());
+            final ResultSet resultSet = statement.executeQuery();
             return readGiocatoriIscrittiFromResultSet(resultSet);
         } catch (final SQLException e) {
             throw new IllegalStateException(e);

@@ -120,18 +120,23 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
                 break;
         }
         final String query =
-            "SELECT et.* FROM " + VIEW_NAME + " et LEFT JOIN ISCRIZIONI i " +
+            "SELECT DISTINCT et.* FROM " + VIEW_NAME + " et LEFT JOIN ISCRIZIONI i " +
             "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione) " +
             "WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
             "AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) " +
             "AND Tipo = ? " +
             "AND ? not in (" +
-                "SELECT Id_Utente FROM ISCRIZIONI WHERE Id_Torneo = i.Id_Torneo AND Numero_Edizione = i.Numero_Edizione)";
+                "SELECT Id_Utente FROM ISCRIZIONI WHERE Id_Torneo = i.Id_Torneo AND Numero_Edizione = i.Numero_Edizione) " +
+            "AND NOT EXISTS (SELECT it.Id_Torneo, it.Numero_Edizione FROM ISCRIZIONI_CON_TORNEO it " +
+                "WHERE it.Id_Utente = ? " +
+                "AND ((et.Data_Inizio BETWEEN it.Data_Inizio AND it.Data_Fine) " +
+                "OR (et.Data_Fine BETWEEN it.Data_Inizio AND it.Data_Fine)))";
         try (final PreparedStatement statement = this.getConnection().prepareStatement(query)) {
             statement.setInt(1, giocatore.getEta());
             statement.setInt(2, cat);
             statement.setString(3, t);
             statement.setInt(4, giocatore.getId());
+            statement.setInt(5, giocatore.getId());
             final ResultSet resultSet = statement.executeQuery();
             return this.readTorneiWithEditionsFromResultSet(resultSet);
         } catch (final SQLException e) {
@@ -175,25 +180,26 @@ public class ViewTornei implements View<TorneiWithEditions, Pair<Integer, Intege
             }
         }
         final String query =
-            /*"SELECT et.*, i.Id_Coppia FROM " + VIEW_NAME + " et JOIN ISCRIZIONI i " +
-            "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione) " +
-            "WHERE i.Id_Utente NOT IN (" +
-                "SELECT cu.Id_Utente FROM COMPAGNO_UNIONI cu " +
-                "WHERE cu.Id_Coppia = ?) " +
-            "AND (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
-            "AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) " +
-            "AND Tipo = ?";*/
             "SELECT et.* FROM " + VIEW_NAME + " et LEFT JOIN ISCRIZIONI i " +
             "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione) " +
             "WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
             "AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) " +
-            "AND Tipo = ?";
+            "AND Tipo = ? " +
+            "AND ? NOT IN (SELECT u.Id_Giocatore FROM ISCRIZIONI i2 RIGHT JOIN UNIONI u " +
+                "ON (i2.Id_Coppia = u.Id_Coppia)" +
+                "WHERE i2.Id_Torneo = i.Id_Torneo AND i2.Numero_Edizione = i.Numero_Edizione) " +
+            "AND NOT EXISTS (SELECT it.Id_Torneo, it.Numero_Edizione FROM ISCRIZIONI_CON_TORNEO it " +
+                "WHERE it.Id_Coppia IN (SELECT it2.Id_Coppia FROM ISCRIZIONI_CON_TORNEO it2 LEFT JOIN UNIONI u2 " +
+                    "ON (it2.id_Coppia = u2.Id_Coppia) " +
+                    "WHERE u2.Id_Giocatore = ?) " +
+                "AND ((et.Data_Inizio BETWEEN it.Data_Inizio AND it.Data_Fine) " +
+                "OR (et.Data_Fine BETWEEN it.Data_Inizio AND it.Data_Fine)))";
         try (final PreparedStatement statement = this.getConnection().prepareStatement(query)) {
-            
-            //statement.setInt(1, id);
             statement.setInt(1, (coppia.getX().getEta() < coppia.getY().getEta()) ? coppia.getY().getEta() : coppia.getX().getEta());
             statement.setInt(2, cat);
             statement.setString(3, t);
+            statement.setInt(4, id);
+            statement.setInt(5, id);
             final ResultSet resultSet = statement.executeQuery();
             return this.readTorneiWithEditionsFromResultSet(resultSet);
         } catch (final SQLException e) {

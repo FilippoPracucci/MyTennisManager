@@ -77,7 +77,7 @@ public class TorneiEligiblePanel extends JPanel {
                 queryManager.listTorneiToMatrix(
                     queryManager.findAllDoppiEligibleByCoppia(
                         queryManager.findGiocatoriOfCoppia(queryManager.findCoppia(couple.get()).get()),
-                        couple.get()
+                        queryManager.findGiocatoreByCredentials(credentials.getX(), credentials.getY()).get().getId()
                     ), this.columns.size()),
                 this.columns.toArray());
         } else {

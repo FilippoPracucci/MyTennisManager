@@ -107,16 +107,19 @@ public class ViewIscrittiDoppi implements View<CoppieIscritte, Tern<Integer, Int
         }
     }
 
-    public List<CoppieIscritte> findAllIscrittiByPreferenzaOrario(final String timePreference) {
+    public List<CoppieIscritte> findAllIscrittiByPreferenzaOrario(final String timePreference, final Pair<Integer, Integer> edition) {
         final String query;
         if (timePreference == "Nessuna") {
-            query = "SELECT * FROM " + VIEW_NAME;
+            query = "SELECT DISTINCT * FROM " + VIEW_NAME  + " WHERE Id_Torneo = ? AND Numero_Edizione = ?";
         } else {
-            query = "SELECT * FROM " + VIEW_NAME + " WHERE Preferenza_Orario IS NULL OR Preferenza_Orario = ?";
+            query = "SELECT DISTINCT * FROM " + VIEW_NAME + " WHERE Id_Torneo = ? AND Numero_Edizione = ? " +
+                "AND (Preferenza_Orario IS NULL OR Preferenza_Orario = ?)";
         }
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, edition.getX());
+            statement.setInt(2, edition.getY());
             if (timePreference != "Nessuna") {
-                statement.setString(1, timePreference);
+                statement.setString(3, timePreference);
             }
             final ResultSet resultSet = statement.executeQuery();
             return readCoppieIscritteFromResultSet(resultSet);

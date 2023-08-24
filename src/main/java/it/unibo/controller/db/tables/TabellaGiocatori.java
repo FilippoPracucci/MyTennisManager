@@ -168,12 +168,13 @@ public class TabellaGiocatori implements Table<Giocatore, Integer> {
     public List<Giocatore> findTopGiocatori(final Integer sYear, final Integer eYear) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Utente IN (" +
             "SELECT * FROM (" +
-                "SELECT u.Id_Giocatore FROM ISCRIZIONI i RIGHT JOIN UNIONI u " +
-                "ON (i.Id_Coppia = u.Id_Coppia) " +
-                "LEFT JOIN EDIZIONE_TORNEI et " +
+                "SELECT DISTINCT CASE WHEN i.Id_Utente IS NULL THEN u.Id_Giocatore ELSE i.Id_Utente END AS Id_G " +
+                "FROM ISCRIZIONI i LEFT JOIN EDIZIONE_TORNEI et " +
                 "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione) " +
+                "LEFT JOIN UNIONI u " +
+                "ON (i.Id_Coppia = u.Id_Coppia) " +
                 "WHERE YEAR (et.Data_Inizio) BETWEEN ? AND ? " +
-                "GROUP BY Id_Giocatore ORDER BY COUNT(Id_Giocatore) DESC " +
+                "GROUP BY Id_G ORDER BY COUNT(Id_G) DESC " +
                 "LIMIT 5) AS topGiocatori)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, sYear);

@@ -353,12 +353,12 @@ public class QueryManager {
         return this.viewIscrittiSingoli.findAllIscrittiByEdizioneTorneo(edizioneTorneo.getIdTorneo(), edizioneTorneo.getNumeroEdizione());
     }
 
-    public List<GiocatoriIscritti> findAllIscrittiByPreferenzaOrario(final String prefOrario) {
-        return this.viewIscrittiSingoli.findAllIscrittiByPreferenzaOrario(prefOrario);
+    public List<GiocatoriIscritti> findAllIscrittiByPreferenzaOrario(final String prefOrario, final Pair<Integer, Integer> edizione) {
+        return this.viewIscrittiSingoli.findAllIscrittiByPreferenzaOrario(prefOrario, edizione);
     }
 
-    public List<GiocatoriIscritti> findAllIscrittiOrderByClassifica() {
-        return this.viewIscrittiSingoli.orderAllIscrittiByClassifica();
+    public List<GiocatoriIscritti> findAllIscrittiOrderByClassifica(final Pair<Integer, Integer> edizione) {
+        return this.viewIscrittiSingoli.orderAllIscrittiByClassifica(edizione);
     }
 
     public Object[][] listGiocatoriIscrittiToMatrix(final List<GiocatoriIscritti> list, final int col) {
@@ -387,8 +387,8 @@ public class QueryManager {
         return this.viewIscrittiDoppi.findAllIscrittiByEdizioneTorneo(edizioneTorneo.getIdTorneo(), edizioneTorneo.getNumeroEdizione());
     }
 
-    public List<CoppieIscritte> findAllCoppieIscritteByPreferenzaOrario(final String prefOrario) {
-        return this.viewIscrittiDoppi.findAllIscrittiByPreferenzaOrario(prefOrario);
+    public List<CoppieIscritte> findAllCoppieIscritteByPreferenzaOrario(final String prefOrario, final Pair<Integer, Integer> edizione) {
+        return this.viewIscrittiDoppi.findAllIscrittiByPreferenzaOrario(prefOrario, edizione);
     }
 
     public Object[][] listCoppieIscritteToMatrix(final List<CoppieIscritte> list, final int col) {
