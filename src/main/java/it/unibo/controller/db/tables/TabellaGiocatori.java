@@ -30,39 +30,6 @@ public class TabellaGiocatori implements Table<Giocatore, Integer> {
     }
 
     @Override
-    public boolean createTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Utente INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-                        "Nome VARCHAR(40) NOT NULL," + 
-                        "Cognome VARCHAR(40) NOT NULL," + 
-                        "Email VARCHAR(40) NOT NULL UNIQUE," + 
-                        "Password VARCHAR(12) NOT NULL," +
-                        "Tessera VARCHAR(11) NOT NULL UNIQUE," +
-                        "Classifica VARCHAR(4) NOT NULL," +
-                        "Eta INT NOT NULL," +
-                        "Sesso CHAR(1) NOT NULL CHECK(Sesso in ('M', 'F'))," +
-                        "Telefono VARCHAR(11) NOT NULL UNIQUE," +
-                        "Id_Circolo INT NOT NULL" +
-                    ")");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE " + TABLE_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<Giocatore> findByPrimaryKey(final Integer id) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Utente = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
@@ -168,8 +135,8 @@ public class TabellaGiocatori implements Table<Giocatore, Integer> {
     public List<Giocatore> findTopGiocatori(final Integer sYear, final Integer eYear) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Utente IN (" +
             "SELECT * FROM (" +
-                "SELECT DISTINCT CASE WHEN i.Id_Utente IS NULL THEN u.Id_Giocatore ELSE i.Id_Utente END AS Id_G " +
-                "FROM ISCRIZIONI i LEFT JOIN EDIZIONE_TORNEI et " +
+                "SELECT DISTINCT CASE WHEN i.Id_Utente IS NULL THEN u.Id_Utente ELSE i.Id_Utente END AS Id_G " +
+                "FROM ISCRIZIONI i LEFT JOIN EDIZIONI_TORNEO et " +
                 "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione) " +
                 "LEFT JOIN UNIONI u " +
                 "ON (i.Id_Coppia = u.Id_Coppia) " +

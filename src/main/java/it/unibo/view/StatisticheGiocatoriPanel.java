@@ -45,7 +45,7 @@ public class StatisticheGiocatoriPanel extends JPanel {
             Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue())
         );
 
-        this.columns = List.of("Id_Giocatore",
+        this.columns = List.of("Id_Utente",
             "Nome",
             "Cognome",
             "Email",

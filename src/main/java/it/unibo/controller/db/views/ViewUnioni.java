@@ -35,32 +35,8 @@ public class ViewUnioni implements View<CompagnoUnioni, Pair<Integer, Integer>> 
     }
 
     @Override
-    public boolean createView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE VIEW " + VIEW_NAME + " AS (" +
-                "SELECT u.Id_Coppia, g.Id_Utente, g.Nome, g.Cognome, g.Classifica, g.Sesso " +
-                "FROM UNIONI u " + "JOIN GIOCATORI g " +
-                "ON (u.Id_Giocatore = g.Id_Utente))");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP VIEW " + VIEW_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<CompagnoUnioni> findByPrimaryKey(final Pair<Integer, Integer> key) {
-        final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Coppia = ? AND Id_Giocatore = ?";
+        final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Coppia = ? AND Id_Utente = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, key.getX());
             statement.setInt(2, key.getY());

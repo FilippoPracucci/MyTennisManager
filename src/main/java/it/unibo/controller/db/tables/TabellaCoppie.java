@@ -30,29 +30,6 @@ public class TabellaCoppie implements Table<Coppia, Integer> {
     }
 
     @Override
-    public boolean createTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Coppia INT NOT NULL AUTO_INCREMENT PRIMARY KEY" +
-                    ")");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE " + TABLE_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<Coppia> findByPrimaryKey(final Integer id) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Coppia = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {

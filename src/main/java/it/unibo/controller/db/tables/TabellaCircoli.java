@@ -30,34 +30,6 @@ public class TabellaCircoli implements Table<Circolo, Integer> {
     }
 
     @Override
-    public boolean createTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Circolo INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-                        "Organizzatore INT NOT NULL," +
-                        "Nome VARCHAR(40) NOT NULL," + 
-                        "Citta VARCHAR(40) NOT NULL," + 
-                        "Indirizzo VARCHAR(40) NOT NULL," + 
-                        "Telefono VARCHAR(12) NOT NULL UNIQUE" +
-                    ")");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE " + TABLE_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<Circolo> findByPrimaryKey(final Integer id) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Circolo = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
@@ -146,7 +118,7 @@ public class TabellaCircoli implements Table<Circolo, Integer> {
     public List<Circolo> findTopCircoli(final Integer sYear, final Integer eYear) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Circolo IN (" +
             "SELECT * FROM (" +
-                "SELECT Id_Circolo FROM EDIZIONE_TORNEI " +
+                "SELECT Id_Circolo FROM EDIZIONI_TORNEO " +
                 "WHERE YEAR (Data_Inizio) BETWEEN ? AND ? " +
                 "GROUP BY Id_Circolo ORDER BY COUNT(Id_Circolo) DESC " +
                 "LIMIT 3) AS topCircoli)";

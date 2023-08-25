@@ -19,7 +19,7 @@ import it.unibo.utils.Utils;
 
 public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer, Integer>> {
 
-    public static final String TABLE_NAME = "EDIZIONE_TORNEI";
+    public static final String TABLE_NAME = "EDIZIONI_TORNEO";
 
     private final Connection connection; 
 
@@ -34,35 +34,6 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
     @Override
     public String getTableName() {
         return TABLE_NAME;
-    }
-
-    @Override
-    public boolean createTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Torneo INT NOT NULL," +
-                        "Numero_Edizione INT NOT NULL," + 
-                        "Data_Inizio DATE NOT NULL," + 
-                        "Data_Fine DATE NOT NULL," +
-                        "Id_Circolo INT NOT NULL," +
-                        "PRIMARY KEY(Id_Torneo, Numero_Edizione)," +
-                        "UNIQUE(Id_Torneo, Numero_Edizione, Id_Circolo)" +
-                    ")");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE " + TABLE_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
     }
 
     @Override

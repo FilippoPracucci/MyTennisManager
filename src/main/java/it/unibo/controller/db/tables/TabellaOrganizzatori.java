@@ -30,33 +30,6 @@ public class TabellaOrganizzatori implements Table<Organizzatore, Integer> {
     }
 
     @Override
-    public boolean createTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Utente INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-                        "Nome VARCHAR(40) NOT NULL," + 
-                        "Cognome VARCHAR(40) NOT NULL," + 
-                        "Email VARCHAR(40) NOT NULL UNIQUE," + 
-                        "Password VARCHAR(12) NOT NULL" +
-                    ")");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE " + TABLE_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<Organizzatore> findByPrimaryKey(final Integer id) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Utente = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {

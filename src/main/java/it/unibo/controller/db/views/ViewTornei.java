@@ -39,31 +39,6 @@ public class ViewTornei implements View<TorneiWithEdizioni, Pair<Integer, Intege
     }
 
     @Override
-    public boolean createView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE VIEW " + VIEW_NAME + " AS (" +
-                "SELECT t.Id_Torneo, et.Numero_Edizione, t.Tipo, et.Data_Inizio, et.Data_Fine, t.Limite_Categoria, t.Limite_Eta, t.Montepremi, et.Id_Circolo " +
-                "FROM TORNEI t " +
-                "JOIN EDIZIONE_TORNEI et " +
-                "ON (t.Id_Torneo = et.Id_Torneo))");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP VIEW " + VIEW_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<TorneiWithEdizioni> findByPrimaryKey(final Pair<Integer, Integer> key) {
         final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Torneo = ? AND Numero_Edizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
@@ -185,21 +160,23 @@ public class ViewTornei implements View<TorneiWithEdizioni, Pair<Integer, Intege
             "WHERE (Limite_Eta IS NULL OR Limite_Eta >= ?) " +
             "AND (Limite_Categoria IS NULL OR Limite_Categoria <= ?) " +
             "AND Tipo = ? " +
-            "AND ? NOT IN (SELECT u.Id_Giocatore FROM ISCRIZIONI i2 RIGHT JOIN UNIONI u " +
+            "AND (? AND ?) NOT IN (SELECT u.Id_Utente FROM ISCRIZIONI i2 RIGHT JOIN UNIONI u " +
                 "ON (i2.Id_Coppia = u.Id_Coppia)" +
                 "WHERE i2.Id_Torneo = i.Id_Torneo AND i2.Numero_Edizione = i.Numero_Edizione) " +
             "AND NOT EXISTS (SELECT it.Id_Torneo, it.Numero_Edizione FROM ISCRIZIONI_CON_TORNEO it " +
                 "WHERE it.Id_Coppia IN (SELECT it2.Id_Coppia FROM ISCRIZIONI_CON_TORNEO it2 LEFT JOIN UNIONI u2 " +
                     "ON (it2.id_Coppia = u2.Id_Coppia) " +
-                    "WHERE u2.Id_Giocatore = ?) " +
+                    "WHERE u2.Id_Utente = ? OR u2.Id_Utente = ?) " +
                 "AND ((et.Data_Inizio BETWEEN it.Data_Inizio AND it.Data_Fine) " +
                 "OR (et.Data_Fine BETWEEN it.Data_Inizio AND it.Data_Fine)))";
         try (final PreparedStatement statement = this.getConnection().prepareStatement(query)) {
             statement.setInt(1, (coppia.getX().getEta() < coppia.getY().getEta()) ? coppia.getY().getEta() : coppia.getX().getEta());
             statement.setInt(2, cat);
             statement.setString(3, t);
-            statement.setInt(4, id);
-            statement.setInt(5, id);
+            statement.setInt(4, coppia.getX().getId());
+            statement.setInt(5, coppia.getY().getId());
+            statement.setInt(6, coppia.getX().getId());
+            statement.setInt(7, coppia.getY().getId());
             final ResultSet resultSet = statement.executeQuery();
             return this.readTorneiWithEditionsFromResultSet(resultSet);
         } catch (final SQLException e) {

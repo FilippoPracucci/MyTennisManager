@@ -42,31 +42,6 @@ public class ViewIscrittiDoppi implements View<CoppieIscritte, Tern<Integer, Int
     }
 
     @Override
-    public boolean createView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE VIEW " + VIEW_NAME + " AS (" +
-                "SELECT DISTINCT u.Id_Coppia, i.Id_Torneo, i.Numero_Edizione, i.Preferenza_Orario " +
-                "FROM UNIONI u " +
-                "JOIN ISCRIZIONI i " +
-                "ON (u.Id_Coppia = i.Id_Coppia))");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP VIEW " + VIEW_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<CoppieIscritte> findByPrimaryKey(final Tern<Integer, Integer, Integer> key) {
         final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Coppia = ? AND Id_Torneo = ? AND Numero_Edizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {

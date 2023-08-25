@@ -32,34 +32,6 @@ public class TabellaIscrizioni implements Table<Iscrizione, Integer> {
     }
 
     @Override
-    public boolean createTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Iscrizione INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-                        "Preferenza_Orario VARCHAR(12) CHECK (Preferenza_Orario in ('9:00-13:00', '15:00-21:00'))," +
-                        "Id_Torneo INT NOT NULL," + 
-                        "Numero_Edizione INT NOT NULL," + 
-                        "Id_Utente INT," +
-                        "Id_Coppia INT" +
-                    ")");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE " + TABLE_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<Iscrizione> findByPrimaryKey(final Integer id) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Iscrizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {

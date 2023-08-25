@@ -42,30 +42,6 @@ public class ViewIscrizioniGiocatore implements View<IscrizioniWithTorneo, Pair<
     }
 
     @Override
-    public boolean createView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE VIEW " + VIEW_NAME + " AS (" +
-                "SELECT et.Id_Torneo, et.Numero_Edizione, et.Tipo, et.Data_Inizio, et.Data_Fine, c.Nome as Circolo, et.Limite_Categoria, et.Limite_Eta, et.Montepremi, i.Preferenza_Orario, i.Id_Utente, i.Id_Coppia " +
-                "FROM ISCRIZIONI i JOIN TORNEI_CON_EDIZIONI et JOIN CIRCOLI c " +
-                "ON (et.Id_Torneo = i.Id_Torneo AND et.Numero_Edizione = i.Numero_Edizione AND et.Id_Circolo = c.Id_Circolo))");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP VIEW " + VIEW_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<IscrizioniWithTorneo> findByPrimaryKey(final Pair<Integer, Integer> key) {
         final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Torneo = ? AND Numero_Edizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {

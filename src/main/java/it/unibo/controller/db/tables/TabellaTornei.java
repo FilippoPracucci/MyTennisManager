@@ -32,33 +32,6 @@ public class TabellaTornei implements Table<Torneo, Integer> {
     }
 
     @Override
-    public boolean createTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Torneo INT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
-                        "Tipo VARCHAR(20) NOT NULL CHECK(Tipo in('Singolare maschile', 'Singolare femminile', 'Doppio maschile', 'Doppio femminile'))," +
-                        "Limite_Categoria INT," +
-                        "Limite_Eta INT," +
-                        "Montepremi INT" +
-                    ")");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE " + TABLE_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<Torneo> findByPrimaryKey(final Integer id) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Torneo = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
@@ -144,7 +117,7 @@ public class TabellaTornei implements Table<Torneo, Integer> {
 
     public List<Torneo> findAllByCircolo(final Integer idCircolo) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Torneo IN " +
-                "(SELECT EDIZIONE_TORNEI.Id_Torneo FROM EDIZIONE_TORNEI WHERE Id_Circolo = ?)";
+                "(SELECT EDIZIONI_TORNEO.Id_Torneo FROM EDIZIONI_TORNEO WHERE Id_Circolo = ?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, idCircolo);
             final ResultSet resultSet = statement.executeQuery();

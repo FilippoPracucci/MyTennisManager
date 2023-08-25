@@ -35,31 +35,6 @@ public class ViewIscrittiSingoli implements View<GiocatoriIscritti, Tern<Integer
     }
 
     @Override
-    public boolean createView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE VIEW " + VIEW_NAME + " AS (" +
-                "SELECT g.Id_Utente, g.Nome, g.Cognome, g.Email, g.Tessera, g.Classifica, g.Eta, g.Telefono, i.Id_Torneo, i.Numero_Edizione, i.Preferenza_Orario " +
-                "FROM GIOCATORI g " +
-                "JOIN ISCRIZIONI i " +
-                "ON (g.Id_Utente = i.Id_Utente))");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropView() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP VIEW " + VIEW_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<GiocatoriIscritti> findByPrimaryKey(final Tern<Integer, Integer, Integer> key) {
         final String query = "SELECT * FROM " + VIEW_NAME + " WHERE Id_Utente = ? AND Id_Torneo = ? AND Numero_Edizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {

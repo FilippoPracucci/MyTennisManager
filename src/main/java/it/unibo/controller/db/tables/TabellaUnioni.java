@@ -31,33 +31,8 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
     }
 
     @Override
-    public boolean createTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate(
-                "CREATE TABLE " + TABLE_NAME + " (" +
-                        "Id_Coppia INT NOT NULL," +
-                        "Id_Giocatore INT NOT NULL," +
-                        "PRIMARY KEY (Id_Coppia, Id_Giocatore)" +
-                    ")");
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dropTable() {
-        try (final Statement statement = this.connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE " + TABLE_NAME);
-            return true;
-        } catch (final SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
     public Optional<Unione> findByPrimaryKey(final Pair<Integer, Integer> key) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Coppia = ? AND Id_Giocatore = ?";
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE Id_Coppia = ? AND Id_Utente = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, key.getX());
             statement.setInt(2, key.getY());
@@ -80,7 +55,7 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
 
     @Override
     public boolean save(final Unione unione) {
-        final String query = "INSERT INTO " + TABLE_NAME + "(Id_Coppia, Id_Giocatore) VALUES (?,?)";
+        final String query = "INSERT INTO " + TABLE_NAME + "(Id_Coppia, Id_Utente) VALUES (?,?)";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, unione.getIdCoppia());
             statement.setInt(2, unione.getIdGiocatore());
@@ -103,7 +78,7 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
 
     @Override
     public boolean delete(final Pair<Integer, Integer> key) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE Id_Coppia = ? AND Id_Giocatore = ?";
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE Id_Coppia = ? AND Id_Utente = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, key.getX());
             statement.setInt(2, key.getY());
@@ -117,7 +92,7 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
         final String query = "SELECT u.Id_Coppia FROM " + TABLE_NAME + " AS u " +
             "WHERE u.Id_Coppia IN (" +
                 "SELECT Id_Coppia FROM " + TABLE_NAME +
-                " WHERE Id_Giocatore = ?) " +
+                " WHERE Id_Utente = ?) " +
             "GROUP BY u.Id_Coppia " +
             "HAVING COUNT(*) = 2";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
@@ -131,7 +106,7 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
 
     public Pair<Integer, Integer> findIdGiocatoriOfCoppia(final Integer idCoppia) {
         List<Integer> idGiocatori;
-        final String query = "SELECT Id_Giocatore FROM " + TABLE_NAME +
+        final String query = "SELECT Id_Utente FROM " + TABLE_NAME +
             " WHERE Id_Coppia = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, idCoppia);
@@ -148,7 +123,7 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
         try {
             while (resultSet.next()) {
                 final int idCoppia = resultSet.getInt("Id_Coppia");
-                final int idGiocatore = resultSet.getInt("Id_Giocatore");
+                final int idGiocatore = resultSet.getInt("Id_Utente");
 
                 final Unione unione = new Unione(idCoppia, idGiocatore);
                 unioni.add(unione);
@@ -172,7 +147,7 @@ public class TabellaUnioni implements Table<Unione, Pair<Integer, Integer>> {
         final List<Integer> ids = new ArrayList<>();
         try {
             while (resultSet.next()) {
-                final int idGiocatore = resultSet.getInt("Id_Giocatore");
+                final int idGiocatore = resultSet.getInt("Id_Utente");
                 ids.add(idGiocatore);
             }
         } catch (final SQLException e) {}
