@@ -84,7 +84,7 @@ public class TabellaEdizioniTorneo implements Table<EdizioneTorneo, Pair<Integer
             "UPDATE " + TABLE_NAME + " SET " +
                 "Data_Inizio = ?," + 
                 "Data_Fine = ?," +
-                "Id_Circolo = ?" +
+                "Id_Circolo = ? " +
             "WHERE Id_Torneo = ? AND Numero_Edizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1, Utils.dateToSqlDate(edizioneTorneo.getDataInizio()));

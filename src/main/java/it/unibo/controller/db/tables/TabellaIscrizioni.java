@@ -92,7 +92,7 @@ public class TabellaIscrizioni implements Table<Iscrizione, Integer> {
                 "Id_Torneo = ?," +
                 "Numero_Edizione = ?," +
                 "Id_Utente = ?," + 
-                "Id_Coppia = ?" +
+                "Id_Coppia = ? " +
             "WHERE Id_Iscrizione = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, iscrizione.getPreferenzaOrario().get());

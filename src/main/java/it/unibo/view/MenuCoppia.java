@@ -55,7 +55,8 @@ public class MenuCoppia extends JPanel {
 
         this.setLayout(new BorderLayout());
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
-                Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue()));
+                Double.valueOf(dim.getHeight() * HEIGHT_PERC).intValue())
+        );
 
         this.columns = List.of("Id_Coppia",
             "Id_Compagno",

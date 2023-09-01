@@ -5,8 +5,8 @@ import it.unibo.controller.db.QueryManagerImpl;
 import it.unibo.view.MainFrame;
 
 public class App {
-    private final String username = "root";
-    private final String password = "Wipassatelli20!";
+    private final String username = "filippo";
+    private final String password = "FPracucciDB123!";
     private final String dbName = "mytennismanager";
 
     private final ConnectionProvider connectionProvider;

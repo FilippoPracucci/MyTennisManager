@@ -89,7 +89,7 @@ public class TabellaCircoli implements Table<Circolo, Integer> {
                 "Nome = ?," + 
                 "Citta = ?," +
                 "Indirizzo = ?," + 
-                "Telefono = ?" +
+                "Telefono = ? " +
             "WHERE Id_Circolo = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, circolo.getOrganizzatore());

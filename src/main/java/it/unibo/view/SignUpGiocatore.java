@@ -88,7 +88,7 @@ public class SignUpGiocatore extends JPanel {
         this.phoneField = new JTextField(Double.valueOf(dim.getWidth() * 0.025).intValue());
         this.club = new JComboBox<>();
         this.clubName = new JLabel();
-        
+
         this.signUp = new JButton(SIGNUP);
         this.cancel = new JButton(CANCEL);
 
@@ -126,7 +126,7 @@ public class SignUpGiocatore extends JPanel {
             this.clubName.setText(queryManager.findCircolo((Integer) this.club.getModel().getSelectedItem()).get().getNome());
         });
 
-        
+
         southPanel.add(this.signUp, cnst);
         southPanel.add(this.cancel, cnst);
         this.add(southPanel, cnst);

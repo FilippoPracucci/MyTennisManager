@@ -74,6 +74,21 @@ public interface QueryManager {
     Optional<Organizzatore> findOrganizzatoreByCredentials(String email, String password);
 
     /**
+     * Update the current organizer's data.
+     * 
+     * @param nome the new name
+     * @param cognome the new surname
+     * @param email the new email
+     * @param password the new password
+     */
+    void updateOrganizzatore(Integer id,
+        String nome,
+        String cognome,
+        String email,
+        String password
+    );
+
+    /**
      * Creates a new {@code Giocatore}.
      * 
      * @param nome the name
@@ -145,6 +160,33 @@ public interface QueryManager {
      * @return the list of {@code Giocatore} filtered
      */
     List<Giocatore> findTopGiocatori(Integer annoI, Integer annoF);
+
+    /**
+     * Update the current player's data.
+     * 
+     * @param nome the new name
+     * @param cognome the new surname
+     * @param email the new email
+     * @param password the new password
+     * @param tessera the new badge number
+     * @param classifica the new ranking
+     * @param eta the new age
+     * @param sesso the gender
+     * @param telefono the new phone number
+     * @param circolo the new club
+     */
+    void updateGiocatore(Integer id,
+        String nome,
+        String cognome,
+        String email,
+        String password,
+        String tessera,
+        String classifica,
+        int eta,
+        String sesso,
+        String telefono,
+        Integer circolo
+    );
 
     /**
      * Converts the list of {@code Giocatore} into a matrix of objects.

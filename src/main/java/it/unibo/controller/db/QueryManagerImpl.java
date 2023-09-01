@@ -97,6 +97,16 @@ public class QueryManagerImpl implements QueryManager {
     }
 
     @Override
+    public void updateOrganizzatore(final Integer id,
+        final String nome,
+        final String cognome,
+        final String email,
+        final String password) {
+
+        this.organizzatore.update(new Organizzatore(id, nome, cognome, email, password));
+    }
+
+    @Override
     public Giocatore createGiocatore(final String nome,
             final String cognome,
             final String email,
@@ -134,6 +144,24 @@ public class QueryManagerImpl implements QueryManager {
     @Override
     public List<Giocatore> findTopGiocatori(final Integer annoI, final Integer annoF) {
         return this.giocatore.findTopGiocatori(annoI, annoF);
+    }
+
+    @Override
+    public void updateGiocatore(final Integer id,
+        final String nome,
+        final String cognome,
+        final String email,
+        final String password,
+        final String tessera,
+        final String classifica,
+        final int eta,
+        final String sesso,
+        final String telefono,
+        final Integer circolo) {
+
+        this.giocatore.update(new Giocatore(
+            id, nome, cognome, email, password, tessera, classifica, eta, sesso, telefono, circolo)
+        );
     }
 
     @Override

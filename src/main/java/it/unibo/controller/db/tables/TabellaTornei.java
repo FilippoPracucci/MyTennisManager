@@ -90,7 +90,7 @@ public class TabellaTornei implements Table<Torneo, Integer> {
                 "Tipo = ?," + 
                 "Limite_Categoria = ?," +
                 "Limite_Eta = ?," + 
-                "Montepremi = ?" +
+                "Montepremi = ? " +
             "WHERE Id_Torneo = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, torneo.getTipo().getNome());

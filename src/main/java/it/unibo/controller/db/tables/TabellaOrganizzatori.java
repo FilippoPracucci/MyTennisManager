@@ -88,7 +88,7 @@ public class TabellaOrganizzatori implements Table<Organizzatore, Integer> {
                 "Nome = ?," + 
                 "Cognome = ?," +
                 "Email = ?," + 
-                "Password = ?" +
+                "Password = ? " +
             "WHERE Id_Utente = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, organizzatore.getNome());

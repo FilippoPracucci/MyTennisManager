@@ -123,24 +123,30 @@ public class TorneiEligiblePanel extends JPanel {
             if (isPlayer) {
                 queryManager.addIscrizione(
                     queryManager.createIscrizione(null,
-                            tP,
-                            edition.getX(),
-                            edition.getY(),
-                            Optional.of(id),
-                            Optional.empty())
+                        tP,
+                        edition.getX(),
+                        edition.getY(),
+                        Optional.of(id),
+                        Optional.empty()
+                    )
                 );
             } else {
                 queryManager.addIscrizione(
                     queryManager.createIscrizione(null,
-                            tP,
-                            edition.getX(),
-                            edition.getY(),
-                            Optional.empty(),
-                            Optional.of(id))
+                        tP,
+                        edition.getX(),
+                        edition.getY(),
+                        Optional.empty(),
+                        Optional.of(id)
+                    )
                 );
             }
             JOptionPane.showMessageDialog(this, "Iscrizione effettuata con successo!");
-            frame.changePanel(new MenuGiocatore(frame, dim, queryManager, credentials));
+            if (isPlayer) {
+                frame.changePanel(new MenuGiocatore(frame, dim, queryManager, credentials));
+            } else {
+                frame.changePanel(new TorneiEligiblePanel(frame, dim, queryManager, credentials, isPlayer, couple));
+            }
         });
 
         this.buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));

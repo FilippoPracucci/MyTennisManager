@@ -19,12 +19,14 @@ public class MenuGiocatore extends JPanel {
     private static final String TOURNAMENTS_FILTERED = "Lista tornei con filtro";
     private static final String ALL_REGISTRATIONS = "Lista iscrizioni";
     private static final String COUPLE_MENU = "Menù coppie";
+    private static final String MY_PROFILE = "Profilo";
 
     private final JTabbedPane pane;
     private final JPanel tournamentsPanel;
     private final JPanel tournamentsFilteredPanel;
     private final JPanel registrationsPanel;
     private final JPanel couplePanel;
+    private final JPanel profilePanel;
 
     public MenuGiocatore(final SecondaryFrame frame,
             final Dimension dim,
@@ -36,6 +38,7 @@ public class MenuGiocatore extends JPanel {
         this.tournamentsFilteredPanel = new TorneiFiltered(frame, dim, queryManager, credentials);
         this.registrationsPanel = new AllIscrizioni(frame, dim, queryManager, credentials, Optional.empty());
         this.couplePanel = new MenuCoppia(frame, dim, queryManager, credentials);
+        this.profilePanel = new MyProfilePanel(frame, dim, queryManager, credentials, true);
 
         this.setLayout(new FlowLayout(FlowLayout.CENTER));
         this.setPreferredSize(new Dimension(Double.valueOf(dim.getWidth() * WIDTH_PERC).intValue(),
@@ -45,6 +48,7 @@ public class MenuGiocatore extends JPanel {
         this.pane.add(TOURNAMENTS_FILTERED, this.tournamentsFilteredPanel);
         this.pane.add(ALL_REGISTRATIONS, this.registrationsPanel);
         this.pane.add(COUPLE_MENU, this.couplePanel);
+        this.pane.add(MY_PROFILE, this.profilePanel);
         this.add(this.pane);
     }
 }

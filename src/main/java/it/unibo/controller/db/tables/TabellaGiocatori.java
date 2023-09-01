@@ -101,7 +101,7 @@ public class TabellaGiocatori implements Table<Giocatore, Integer> {
                 "Eta = ?," +
                 "Sesso = ?," +
                 "Telefono = ?," +
-                "Id_Circolo = ?" +
+                "Id_Circolo = ? " +
             "WHERE Id_Utente = ?";
         try (final PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, giocatore.getNome());
