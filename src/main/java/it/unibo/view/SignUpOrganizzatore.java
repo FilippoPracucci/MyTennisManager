@@ -87,7 +87,7 @@ public class SignUpOrganizzatore extends JPanel {
         });
 
         this.cancel.addActionListener(e -> {
-            final String[] options = { "Sì", "No" };
+            final String[] options = { "Si'", "No" };
             final int result = JOptionPane.showOptionDialog(this,
                     "Sei sicuro di voler annullare?",
                     "Uscita",

@@ -51,7 +51,7 @@ public class StatisticheGiocatoriPanel extends JPanel {
             "Email",
             "Tessera",
             "Classifica",
-            "Età",
+            "Eta'",
             "Sesso",
             "Telefono",
             "Id_Circolo"

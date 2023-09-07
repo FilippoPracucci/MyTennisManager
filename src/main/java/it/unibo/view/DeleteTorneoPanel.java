@@ -27,7 +27,7 @@ public class DeleteTorneoPanel extends JPanel {
     private static final String ID_TOURNAMENT_LABEL = "Id torneo";
     private static final String TYPE_LABEL = "Tipo";
     private static final String RANK_LIMIT_LABEL = "Limite di categoria *";
-    private static final String AGE_LIMIT_LABEL = "Limite età *";
+    private static final String AGE_LIMIT_LABEL = "Limite eta' *";
     private static final String PRIZE_LABEL = "Montepremi *";
     private static final String DELETE = "Elimina";
     private static final String CANCEL = "Annulla";
@@ -123,7 +123,7 @@ public class DeleteTorneoPanel extends JPanel {
             List<EdizioneTorneo> list = queryManager.findAllEdizioneByTorneo(queryManager.findTorneo(this.id.get()).get());
             list.forEach(et -> queryManager.deleteEdizioneTorneo(new Pair<>(this.id.get(), et.getNumeroEdizione())));
             queryManager.deleteTorneo(this.id.get());
-            final String[] options = { "Sì", "No" };
+            final String[] options = { "Si'", "No" };
             final int result = JOptionPane.showOptionDialog(this,
                     "Verranno eliminate anche tutte le relative edizioni\n" +
                     "Continuare?",
@@ -140,7 +140,7 @@ public class DeleteTorneoPanel extends JPanel {
         });
 
         this.cancel.addActionListener(e -> {
-            final String[] options = { "Sì", "No" };
+            final String[] options = { "Si'", "No" };
             final int result = JOptionPane.showOptionDialog(this,
                     "Sei sicuro di voler uscirannullaree?",
                     "Uscita",

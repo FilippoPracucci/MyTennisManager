@@ -13,8 +13,8 @@ public class StatisticheMenu extends JPanel {
     private static final double WIDTH_PERC = 0.6;
     private static final double HEIGHT_PERC = 0.5;
 
-    private static final String CLUB_WITH_MORE_TOURNAMENT = "3 circoli con più tornei organizzati";
-    private static final String PLAYER_WITH_MORE_TOURNAMENT = "5 giocatori che hanno disputato più tornei";
+    private static final String CLUB_WITH_MORE_TOURNAMENT = "3 circoli con piu' tornei organizzati";
+    private static final String PLAYER_WITH_MORE_TOURNAMENT = "5 giocatori che hanno disputato piu' tornei";
 
     private final JTabbedPane pane;
     private final JPanel clubPanel;

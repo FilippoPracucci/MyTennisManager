@@ -27,7 +27,7 @@ public class TorneiFiltered extends JPanel {
     private static final double HEIGHT_PERC = 0.5;
 
     private static final String CATEGORY_FILTER_LABEL = "Categoria";
-    private static final String AGE_FILTER_LABEL = "Età massima";
+    private static final String AGE_FILTER_LABEL = "Eta' massima";
     private static final String YEAR_FILTER_LABEL = "Anno";
     private static final String RESET = "Reset";
 

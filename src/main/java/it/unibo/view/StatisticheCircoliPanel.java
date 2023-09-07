@@ -48,7 +48,7 @@ public class StatisticheCircoliPanel extends JPanel {
         this.columns = List.of("Id_Circolo",
             "Id_Organizzatore",
             "Nome",
-            "Città",
+            "Citta'",
             "Indirizzo",
             "Telefono"
         );

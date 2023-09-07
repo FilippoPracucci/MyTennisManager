@@ -53,7 +53,7 @@ public class AllIscrittiPanel extends JPanel{
             "Email",
             "Tessera",
             "Classifica",
-            "Età",
+            "Eta'",
             "Telefono",
             "Preferenza orario");
         this.columnsDoubles = List.of("Id_Coppia",

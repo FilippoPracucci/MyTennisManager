@@ -82,7 +82,7 @@ public class StartMenu extends JPanel {
 
         info.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Registrare prima l'organizzatore e il corrispettivo circolo.\n" +
-                    "Registrare un nuovo giocatore solo se il suo circolo è già stato registrato.");
+                    "Registrare un nuovo giocatore solo se il suo circolo e' gia' stato registrato.");
         });
     }
 }

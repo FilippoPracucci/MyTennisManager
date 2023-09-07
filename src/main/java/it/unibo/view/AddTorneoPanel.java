@@ -27,7 +27,7 @@ public class AddTorneoPanel extends JPanel {
 
     private static final String TYPE_LABEL = "Tipo";
     private static final String RANK_LIMIT_LABEL = "Limite di categoria *";
-    private static final String AGE_LIMIT_LABEL = "Limite età *";
+    private static final String AGE_LIMIT_LABEL = "Limite eta' *";
     private static final String PRIZE_LABEL = "Montepremi *";
     private static final String INFO = "* opzionale";
     private static final String SIGNUP = "Aggiungi";
@@ -118,7 +118,7 @@ public class AddTorneoPanel extends JPanel {
         });
 
         this.cancel.addActionListener(e -> {
-            final String[] options = { "Sì", "No" };
+            final String[] options = { "Si'", "No" };
             final int result = JOptionPane.showOptionDialog(this,
                     "Sei sicuro di voler annullare?",
                     "Uscita",

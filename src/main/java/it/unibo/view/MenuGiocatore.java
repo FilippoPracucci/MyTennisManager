@@ -18,7 +18,7 @@ public class MenuGiocatore extends JPanel {
     private static final String TOURNAMENTS = "Lista tornei idonei";
     private static final String TOURNAMENTS_FILTERED = "Lista tornei con filtro";
     private static final String ALL_REGISTRATIONS = "Lista iscrizioni";
-    private static final String COUPLE_MENU = "Menù coppie";
+    private static final String COUPLE_MENU = "Menu' coppie";
     private static final String MY_PROFILE = "Profilo";
 
     private final JTabbedPane pane;
